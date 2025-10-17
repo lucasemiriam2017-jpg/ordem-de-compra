@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, send_file
+from flask import Flask, render_template, request, send_file, jsonify
 from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors
 from reportlab.lib.units import cm
@@ -6,11 +6,22 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, 
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_CENTER, TA_LEFT
 import io, os
+import re
 
 app = Flask(__name__)
 
 LOGO_PATH = os.path.join("static", "logo.png")
 PDF_PREFIX = "Ordem_Compra"
+
+def only_digits(s):
+    return re.sub(r"\D", "", s or "")
+
+def is_valid_email(email):
+    # validação simples: contém @ e domínio, sem ser excessivamente rigorosa
+    if not email or "@" not in email:
+        return False
+    # regex simples de sanity-check
+    return re.match(r"[^@]+@[^@]+\.[^@]+", email) is not None
 
 @app.route("/")
 def index():
@@ -18,15 +29,35 @@ def index():
 
 @app.route("/gerar_pdf", methods=["POST"])
 def gerar_pdf():
-    data = request.json
+    data = request.json or {}
+    cliente = data.get("cliente", {})
+    filial = data.get("filial", {})
+    itens = data.get("itens", [])
+    obs = data.get("obs", "")
+    pagamento = data.get("pagamento", "")
+    prazo = data.get("prazo", "")
 
-    cliente = data["cliente"]
-    filial = data["filial"]
-    itens = data["itens"]
-    obs = data["obs"]
-    pagamento = data["pagamento"]
-    prazo = data["prazo"]
+    # Back-end: validações básicas de consistência
+    cnpj_digits = only_digits(cliente.get("CNPJ", ""))
+    telefone_digits = only_digits(cliente.get("Telefone", ""))
+    telefone_filial_digits = only_digits(filial.get("Telefone Filial", ""))
 
+    if len(cnpj_digits) not in (14,):
+        return jsonify({"error": "CNPJ inválido. Deve conter 14 dígitos."}), 400
+
+    if len(telefone_digits) < 10:
+        return jsonify({"error": "Telefone da empresa inválido."}), 400
+
+    if len(telefone_filial_digits) < 10:
+        return jsonify({"error": "Telefone filial inválido."}), 400
+
+    if not is_valid_email(cliente.get("E-mail", "")):
+        return jsonify({"error": "E-mail do cliente inválido."}), 400
+
+    if not is_valid_email(filial.get("E-mail Filial", "")):
+        return jsonify({"error": "E-mail da filial inválido."}), 400
+
+    # Geração do PDF
     buffer = io.BytesIO()
     doc = SimpleDocTemplate(
         buffer, pagesize=A4,
@@ -73,11 +104,19 @@ def gerar_pdf():
     total = 0
 
     for i, item in enumerate(itens, start=1):
-        q = item["qtd"]
-        cod = item["cod"]
-        desc = item["desc"]
-        preco = float(item["preco"].replace(",", ".")) if item["preco"] else 0
-        tot = float(item["tot"].replace(",", ".")) if item["tot"] else 0
+        q = item.get("qtd", "")
+        cod = item.get("cod", "")
+        desc = item.get("desc", "")
+        preco_raw = item.get("preco", "") or "0"
+        tot_raw = item.get("tot", "") or "0"
+        try:
+            preco = float(str(preco_raw).replace(",", "."))
+        except:
+            preco = 0.0
+        try:
+            tot = float(str(tot_raw).replace(",", "."))
+        except:
+            tot = preco * (float(q) if q else 0)
         total += tot
         p_fmt = f"{preco:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
         t_fmt = f"{tot:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
@@ -99,7 +138,7 @@ def gerar_pdf():
     e += [t, Spacer(1, 10)]
 
     # Condição de pagamento
-    e.append(Paragraph(f"<b>Condição de Pagamento:</b> Boleto em {pagamento}", st["n"]))
+    e.append(Paragraph(f"<b>Condição de Pagamento:</b> {pagamento}", st["n"]))
     e.append(Spacer(1, 12))
 
     # Observações
@@ -117,8 +156,10 @@ def gerar_pdf():
     doc.build(e)
     buffer.seek(0)
 
-    nome_arquivo = f"{PDF_PREFIX}_{cliente['Empresa'].replace(' ', '_')}.pdf"
+    nome_empresa = cliente.get("Empresa", "sem_nome").replace(" ", "_")
+    nome_arquivo = f"{PDF_PREFIX}_{nome_empresa}.pdf"
     return send_file(buffer, as_attachment=True, download_name=nome_arquivo, mimetype="application/pdf")
+
 
 if __name__ == "__main__":
     app.run(debug=True)
