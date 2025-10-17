@@ -1,227 +1,249 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ordem de Compra</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <style>
-    body {
-      background-color: #f5f7fb;
-      font-family: "Segoe UI", sans-serif;
-    }
-
-    .card {
-      border-radius: 15px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      margin-bottom: 25px;
-    }
-
-    .card-header {
-      background-color: #004C99;
-      color: white;
-      font-weight: 600;
-      text-align: center;
-      border-top-left-radius: 15px;
-      border-top-right-radius: 15px;
-    }
-
-    label {
-      font-weight: 500;
-    }
-
-    .form-control:focus {
-      border-color: #004C99;
-      box-shadow: 0 0 0 0.15rem rgba(0, 76, 153, 0.25);
-    }
-
-    .is-invalid {
-      border-color: #dc3545 !important;
-      box-shadow: 0 0 0 0.15rem rgba(220, 53, 69, 0.25);
-    }
-
-    .invalid-feedback {
-      display: none;
-      color: #dc3545;
-      font-size: 0.8em;
-    }
-
-    .invalid-feedback.active {
-      display: block;
-    }
-
-    .btn-primary {
-      background-color: #004C99;
-      border-color: #004C99;
-    }
-
-    .btn-primary:hover {
-      background-color: #003366;
-    }
-
-    .info-icon {
-      cursor: pointer;
-      color: #004C99;
-      margin-left: 5px;
-    }
-
-    .info-icon:hover {
-      color: #007BFF;
-    }
-
-    .alert-info {
-      background-color: #e8f1fc;
-      border: 1px solid #bcd0f7;
-      color: #004C99;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Ordem de Compra (Web)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+<style>
+body { background-color: #f8f9fa; padding: 20px; }
+.container { max-width: 950px; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,.1); }
+h5 { margin-top: 30px; }
+.logo { display: block; margin: 0 auto 15px; max-width: 200px; }
+#area-itens { margin-top: 25px; }
+input:invalid { border-color: #dc3545; }
+.error-msg { color: #dc3545; font-size: 12px; margin-top: 2px; display: none; }
+.info-box {
+  background: #e9f5ff;
+  border-left: 4px solid #007bff;
+  padding: 10px 15px;
+  border-radius: 8px;
+  margin-top: 20px;
+  font-size: 14px;
+}
+</style>
 </head>
 <body>
-  <div class="container mt-4 mb-5">
-    <h3 class="text-center mb-4 fw-bold text-primary">Ordem de Compra</h3>
+<div class="container">
+  <img src="/static/logo.png" alt="Logo" class="logo">
+  <h3 class="text-center mb-4">Ordem de Compra — Emissão (PDF)</h3>
 
-    <!-- EMPRESA SOLICITANTE -->
-    <div class="card">
-      <div class="card-header">Empresa Solicitante</div>
-      <div class="card-body row g-3">
-        <div class="col-md-6">
-          <label>Empresa:</label>
-          <input type="text" id="cliente_empresa" class="form-control" required />
-          <div class="invalid-feedback">Preencha este campo.</div>
-        </div>
-        <div class="col-md-6">
-          <label>Nome do Responsável:</label>
-          <input type="text" id="cliente_resp" class="form-control" required />
-          <div class="invalid-feedback">Preencha este campo.</div>
-        </div>
-        <div class="col-md-6">
-          <label>CNPJ:</label>
-          <input type="text" id="cliente_cnpj" class="form-control" maxlength="18" oninput="mascaraCNPJ(this)" required />
-          <div class="invalid-feedback">Preencha um CNPJ válido.</div>
-        </div>
-        <div class="col-md-6">
-          <label>Inscrição Estadual:</label>
-          <input type="text" id="cliente_ie" class="form-control" required />
-          <div class="invalid-feedback">Preencha este campo.</div>
-        </div>
-        <div class="col-md-8">
-          <label>Endereço:</label>
-          <input type="text" id="cliente_end" class="form-control" required />
-          <div class="invalid-feedback">Preencha este campo.</div>
-        </div>
-        <div class="col-md-4">
-          <label>Cidade/Estado:</label>
-          <input type="text" id="cliente_cidade" class="form-control" required />
-          <div class="invalid-feedback">Preencha este campo.</div>
-        </div>
-        <div class="col-md-6">
-          <label>Telefone:</label>
-          <input type="text" id="cliente_tel" class="form-control" maxlength="15" oninput="mascaraTelefone(this)" required />
-          <div class="invalid-feedback">Preencha um telefone válido.</div>
-        </div>
-        <div class="col-md-6">
-          <label>E-mail:</label>
-          <input type="email" id="cliente_email" class="form-control" required />
-          <div class="invalid-feedback">Preencha um e-mail válido.</div>
-        </div>
-      </div>
+  <h5>Empresa Solicitante</h5>
+  <div class="row">
+    <div class="col-md-6">
+      <input class="form-control mb-1" id="Empresa" placeholder="Empresa" required>
+      <div class="error-msg">Campo obrigatório</div>
     </div>
-
-    <!-- FILIAL / FORNECEDOR -->
-    <div class="card">
-      <div class="card-header">Filial / Fornecedor</div>
-      <div class="card-body row g-3">
-        <div class="col-md-6">
-          <label>Nome da Filial:</label>
-          <input type="text" id="filial_nome" class="form-control" required />
-          <div class="invalid-feedback">Preencha este campo.</div>
-        </div>
-        <div class="col-md-6">
-          <label>Endereço Filial:</label>
-          <input type="text" id="filial_end" class="form-control" required />
-          <div class="invalid-feedback">Preencha este campo.</div>
-        </div>
-        <div class="col-md-6">
-          <label>Telefone Filial:</label>
-          <input type="text" id="filial_tel" class="form-control" maxlength="15" oninput="mascaraTelefone(this)" required />
-          <div class="invalid-feedback">Preencha este campo.</div>
-        </div>
-        <div class="col-md-6">
-          <label>E-mail Filial:</label>
-          <input type="email" id="filial_email" class="form-control" required />
-          <div class="invalid-feedback">Preencha um e-mail válido.</div>
-        </div>
-        <div class="col-md-4">
-          <label>Ramal:</label>
-          <input type="text" id="filial_ramal" class="form-control" required />
-          <div class="invalid-feedback">Preencha este campo.</div>
-        </div>
-        <div class="col-md-8">
-          <label>Cidade/Estado:</label>
-          <input type="text" id="filial_cidade" class="form-control" required />
-          <div class="invalid-feedback">Preencha este campo.</div>
-        </div>
-      </div>
+    <div class="col-md-6">
+      <input class="form-control mb-1" id="CNPJ" placeholder="CNPJ" required>
+      <div class="error-msg">Informe um CNPJ válido</div>
     </div>
-
-    <!-- CONDIÇÃO DE PAGAMENTO / PRAZO -->
-    <div class="card">
-      <div class="card-header">Condição de Pagamento / Prazo de Entrega</div>
-      <div class="card-body row g-3">
-        <div class="col-md-6">
-          <label>Condição de Pagamento:</label>
-          <input type="text" id="pagamento" class="form-control" required />
-          <div class="invalid-feedback">Preencha este campo.</div>
-        </div>
-        <div class="col-md-6">
-          <label>Prazo de Entrega:</label>
-          <input type="text" id="prazo" class="form-control" required />
-          <div class="invalid-feedback">Preencha este campo.</div>
-        </div>
-      </div>
+    <div class="col-md-6">
+      <input class="form-control mb-1" id="Inscrição Estadual" placeholder="Inscrição Estadual" required>
+      <div class="error-msg">Campo obrigatório</div>
     </div>
-
-    <!-- INCLUSÃO DE PRODUTOS -->
-    <div class="card">
-      <div class="card-header">Inclusão de Produtos</div>
-      <div class="card-body">
-        <table class="table table-bordered" id="tabelaProdutos">
-          <thead class="table-primary text-center">
-            <tr>
-              <th>Item</th>
-              <th>Qtd</th>
-              <th>Código</th>
-              <th>Descrição</th>
-              <th>Preço Unitário (R$)</th>
-              <th>Total (R$)</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-        <button class="btn btn-success btn-sm" onclick="adicionarLinha()">Adicionar Produto</button>
-      </div>
+    <div class="col-md-6">
+      <input class="form-control mb-1" id="Endereço" placeholder="Endereço" required>
+      <div class="error-msg">Campo obrigatório</div>
     </div>
-
-    <!-- OBSERVAÇÕES -->
-    <div class="card">
-      <div class="card-header">Observações</div>
-      <div class="card-body">
-        <textarea id="obs" rows="3" class="form-control" placeholder="Opcional"></textarea>
-      </div>
+    <div class="col-md-6">
+      <input class="form-control mb-1" id="Cidade/Estado" placeholder="Cidade/Estado" required>
+      <div class="error-msg">Campo obrigatório</div>
     </div>
-
-    <!-- MENSAGEM EXPLICATIVA + BOTÕES -->
-    <div class="text-center mt-4">
-      <div class="alert alert-info text-start" style="font-size: 0.9rem; border-radius: 10px;">
-        💡 <b>Processo da ordem de compra:</b><br>
-        Enviar a ordem de compra emitida para análise, após a realização da análise financeira (terá a possibilidade de solicitação de um valor de ENTRADA), solicitaremos o requerimento assinado e carimbado pela empresa (cliente). Após envio por e-mail do documento assinado e carimbado pela empresa, será liberado o limite e seguiremos com as instruções para realização da venda.
-      </div>
-      <button class="btn btn-primary" onclick="gerarPDF()">Gerar PDF</button>
-      <button class="btn btn-secondary" onclick="limpar()">Limpar</button>
+    <div class="col-md-6">
+      <input class="form-control mb-1" id="Telefone" placeholder="Telefone" required>
+      <div class="error-msg">Informe um telefone válido</div>
+    </div>
+    <div class="col-md-6">
+      <input class="form-control mb-1" id="E-mail" placeholder="E-mail" type="email" required>
+      <div class="error-msg">Informe um e-mail válido</div>
+    </div>
+    <div class="col-md-6">
+      <input class="form-control mb-1" id="Nome do Responsável" placeholder="Nome do Responsável" required>
+      <div class="error-msg">Campo obrigatório</div>
+    </div>
+    <div class="col-md-6">
+      <input class="form-control mb-1" id="Data" placeholder="Data" required>
+      <div class="error-msg">Campo obrigatório</div>
     </div>
   </div>
 
-  <script src="/static/script.js"></script>
+  <h5>Filial / Fornecedor</h5>
+  <div class="row">
+    <div class="col-md-6">
+      <input class="form-control mb-1" id="Nome Filial" placeholder="Nome Filial" required>
+      <div class="error-msg">Campo obrigatório</div>
+    </div>
+    <div class="col-md-6">
+      <input class="form-control mb-1" id="Endereço Filial" placeholder="Endereço Filial" required>
+      <div class="error-msg">Campo obrigatório</div>
+    </div>
+    <div class="col-md-6">
+      <input class="form-control mb-1" id="Telefone Filial" placeholder="Telefone Filial" required>
+      <div class="error-msg">Informe um telefone válido</div>
+    </div>
+    <div class="col-md-6">
+      <input class="form-control mb-1" id="E-mail Filial" placeholder="E-mail Filial" type="email" required>
+      <div class="error-msg">Informe um e-mail válido</div>
+    </div>
+    <div class="col-md-6">
+      <input class="form-control mb-1" id="Ramal" placeholder="Ramal">
+    </div>
+    <div class="col-md-6">
+      <input class="form-control mb-1" id="Cidade/Estado Filial" placeholder="Cidade/Estado Filial" required>
+      <div class="error-msg">Campo obrigatório</div>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <label>Prazo de Entrega</label>
+    <input class="form-control" id="prazo" placeholder="Prazo de entrega" value="IMEDIATO" required>
+    <div class="error-msg">Campo obrigatório</div>
+  </div>
+
+  <h5>Condição de Pagamento</h5>
+  <div class="form-check form-check-inline">
+    <input class="form-check-input" type="radio" name="pagamento" value="1x" checked>
+    <label class="form-check-label">Boleto em 1x</label>
+  </div>
+  <div class="form-check form-check-inline">
+    <input class="form-check-input" type="radio" name="pagamento" value="2x">
+    <label class="form-check-label">Boleto em 2x</label>
+  </div>
+  <div class="form-check form-check-inline">
+    <input class="form-check-input" type="radio" name="pagamento" value="3x">
+    <label class="form-check-label">Boleto em 3x</label>
+  </div>
+
+  <h5 class="mt-4">Inclusão de Produtos</h5>
+  <div id="area-itens">
+    <div class="row mb-3">
+      <div class="col"><input class="form-control" id="qtd" placeholder="Qtd"></div>
+      <div class="col"><input class="form-control" id="cod" placeholder="Código"></div>
+      <div class="col"><input class="form-control" id="desc" placeholder="Descrição"></div>
+      <div class="col"><input class="form-control" id="preco" placeholder="Preço Unitário"></div>
+      <div class="col"><button class="btn btn-success" onclick="addItem()">Adicionar</button></div>
+    </div>
+
+    <table class="table table-sm" id="tabela_itens">
+      <thead><tr><th>Qtd</th><th>Código</th><th>Descrição</th><th>Preço Unit (R$)</th><th>Ações</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div class="mt-3">
+    <label>Observações</label>
+    <input class="form-control" id="obs" placeholder="Observações">
+  </div>
+
+  <!-- 💡 Mensagem explicativa -->
+  <div class="info-box">
+    <b>Processo da ordem de compra:</b><br>
+    Enviar a ordem de compra emitida para análise, após a realização da análise financeira (terá a possibilidade de solicitação de um valor de ENTRADA), solicitaremos o requerimento assinado e carimbado pela empresa (cliente). Após envio por e-mail do documento assinado e carimbado pela empresa, será liberado o limite e seguiremos com as instruções para realização da venda.
+  </div>
+
+  <div class="text-center mt-4">
+    <button class="btn btn-primary" onclick="gerarPDF()">Gerar PDF</button>
+    <button class="btn btn-secondary" onclick="limpar()">Limpar</button>
+  </div>
+</div>
+
+<script>
+document.getElementById("Data").value = new Date().toLocaleDateString("pt-BR");
+let itens = [];
+
+$("#CNPJ").mask("00.000.000/0000-00");
+$("#Telefone, #Telefone\\ Filial").mask("(00) 00000-0000");
+
+function addItem() {
+  const q = $("#qtd").val();
+  const c = $("#cod").val();
+  const d = $("#desc").val();
+  const p = $("#preco").val().replace(",", ".");
+  if (!q || !c || !d || !p) return alert("Preencha todos os campos do item!");
+  const tot = (parseFloat(q) * parseFloat(p)).toFixed(2);
+  itens.push({ qtd: q, cod: c, desc: d, preco: parseFloat(p).toFixed(2).replace(".", ","), tot });
+  atualizarTabela();
+  $("#qtd, #cod, #desc, #preco").val("");
+}
+
+function atualizarTabela() {
+  const tbody = $("#tabela_itens tbody");
+  tbody.empty();
+  itens.forEach((it, i) => {
+    tbody.append(`<tr>
+      <td>${it.qtd}</td><td>${it.cod}</td><td>${it.desc}</td><td>${it.preco}</td>
+      <td><button class="btn btn-sm btn-danger" onclick="removerItem(${i})">X</button></td></tr>`);
+  });
+}
+
+function removerItem(i) {
+  itens.splice(i, 1);
+  atualizarTabela();
+}
+
+function limpar() {
+  $("input").val("");
+  $("#Data").val(new Date().toLocaleDateString("pt-BR"));
+  itens = [];
+  atualizarTabela();
+  $(".error-msg").hide();
+  $("input").css("border-color", "");
+}
+
+async function gerarPDF() {
+  let valido = true;
+  $("input[required]").each(function() {
+    const val = $(this).val().trim();
+    const id = $(this).attr("id");
+    const err = $(this).next(".error-msg");
+    if (!val) {
+      $(this).css("border-color", "#dc3545");
+      err.show();
+      valido = false;
+    } else if (id.includes("E-mail") && !val.includes("@")) {
+      $(this).css("border-color", "#dc3545");
+      err.text("Informe um e-mail válido").show();
+      valido = false;
+    } else {
+      $(this).css("border-color", "");
+      err.hide();
+    }
+  });
+
+  if (!valido) return;
+
+  if (itens.length === 0) return alert("Adicione ao menos um item.");
+
+  const cliente = {};
+  ["Empresa","CNPJ","Inscrição Estadual","Endereço","Cidade/Estado","Telefone","E-mail","Nome do Responsável","Data"]
+    .forEach(id => cliente[id] = $("#" + id).val());
+
+  const filial = {};
+  ["Nome Filial","Endereço Filial","Telefone Filial","E-mail Filial","Ramal","Cidade/Estado Filial"]
+    .forEach(id => filial[id] = $("#" + id).val());
+
+  const pagamento = $("input[name='pagamento']:checked").val();
+  const payload = {
+    cliente, filial, itens,
+    obs: $("#obs").val(),
+    pagamento, prazo: $("#prazo").val()
+  };
+
+  const resp = await fetch("/gerar_pdf", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+
+  const blob = await resp.blob();
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "Ordem_Compra.pdf";
+  a.click();
+}
+</script>
 </body>
 </html>
