@@ -72,7 +72,7 @@ input.is-invalid + .invalid-feedback {
   <h5>Inclusão de Produtos</h5>
   <div id="area-itens" class="mb-4">
     <table class="table table-bordered align-middle" id="tabela_itens">
-      <thead class="table-primary text-center">
+      <thead style="background-color: white; color: #004aad; text-align:center;">
         <tr>
           <th style="width:5%">Item</th>
           <th style="width:10%">Qtd</th>
@@ -144,7 +144,7 @@ function adicionarLinha() {
   const linha = document.createElement("tr");
   linha.innerHTML = `
     <td class="text-center">${contador}</td>
-    <td><input type="number" class="form-control qtd" min="1" value="1"></td>
+    <td><input type="number" class="form-control qtd" min="1" placeholder="Qtd"></td>
     <td><input type="text" class="form-control cod"></td>
     <td><input type="text" class="form-control desc"></td>
     <td><input type="text" class="form-control preco" placeholder="0,00"></td>
@@ -173,8 +173,8 @@ function calcularTotais() {
     const cod = linha.querySelector(".cod").value;
     const desc = linha.querySelector(".desc").value;
     const precoStr = linha.querySelector(".preco").value;
-    const preco = parseFloat(precoStr.replace(/\./g,"").replace(",","."));
-    const total = qtd * (preco || 0);
+    const preco = parseFloat(precoStr.replace(/\./g,"").replace(",",".")) || 0;
+    const total = qtd * preco;
     linha.querySelector(".total").textContent = total.toLocaleString("pt-BR",{minimumFractionDigits:2});
     itens.push({qtd:qtd.toString(), cod, desc, preco: preco.toLocaleString("pt-BR",{minimumFractionDigits:2}), tot: total.toLocaleString("pt-BR",{minimumFractionDigits:2})});
   });
@@ -224,4 +224,3 @@ function limpar() {
 </script>
 </body>
 </html>
-
