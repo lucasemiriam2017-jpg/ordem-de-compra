@@ -1,283 +1,325 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ordem de Compra</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-  <style>
-    body { background-color: #f8f9fa; }
-    .card { border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border: none; margin-bottom: 20px; }
-    .card-header { background-color: #004C99; color: white; border-radius: 20px 20px 0 0; text-align: center; font-weight: bold; }
-    label { font-weight: 600; color: #004C99; }
-    input, select, textarea { border-radius: 10px !important; }
-    .is-invalid { border: 1.5px solid #dc3545 !important; }
-    .error-text { color: #dc3545; font-size: 0.85em; display: none; }
-    .info-box {
-      background: #e8f1fb;
-      border-left: 5px solid #004C99;
-      padding: 12px 16px;
-      border-radius: 10px;
-      color: #003366;
-      font-size: 0.9rem;
-      margin-top: 15px;
-    }
-    .btn-primary {
-      background-color: #004C99;
-      border: none;
-      border-radius: 10px;
-      padding: 10px 20px;
-      font-weight: 600;
-    }
-    .btn-primary:hover { background-color: #003366; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ordem de Compra</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f4f6f8;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .container {
+            background: white;
+            padding: 30px 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            max-width: 1000px;
+            margin-top: 40px;
+            margin-bottom: 60px;
+        }
+
+        h3 {
+            background-color: #004C99;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        .form-control:focus {
+            border-color: #004C99;
+            box-shadow: 0 0 0 0.15rem rgba(0, 76, 153, 0.25);
+        }
+
+        .btn-primary {
+            background-color: #004C99;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+        }
+
+        .btn-primary:hover {
+            background-color: #003870;
+        }
+
+        .table th {
+            background-color: #004C99;
+            color: white;
+            text-align: center;
+        }
+
+        .table td {
+            vertical-align: middle;
+        }
+
+        small.text-danger {
+            display: none;
+        }
+
+        .error-border {
+            border-color: #dc3545 !important;
+        }
+
+        .info-box {
+            background-color: #e9f3ff;
+            border-left: 4px solid #004C99;
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin-bottom: 25px;
+            color: #003870;
+        }
+    </style>
 </head>
 <body>
-<div class="container py-4">
+<div class="container">
+    <h2 class="text-center mb-4 fw-bold text-primary">Cadastro de Ordem de Compra</h2>
 
-  <!-- EMPRESA SOLICITANTE -->
-  <div class="card">
-    <div class="card-header">Empresa Solicitante</div>
-    <div class="card-body row g-3">
-      <div class="col-md-6">
-        <label>Empresa</label>
-        <input type="text" class="form-control required">
-        <div class="error-text">Campo obrigatório</div>
-      </div>
-      <div class="col-md-6">
-        <label>Nome do Responsável</label>
-        <input type="text" class="form-control required">
-        <div class="error-text">Campo obrigatório</div>
-      </div>
-      <div class="col-md-6">
-        <label>CNPJ</label>
-        <input type="text" class="form-control required cnpj">
-        <div class="error-text">Campo obrigatório</div>
-      </div>
-      <div class="col-md-6">
-        <label>Inscrição Estadual</label>
-        <input type="text" class="form-control required">
-        <div class="error-text">Campo obrigatório</div>
-      </div>
-      <div class="col-md-6">
-        <label>Endereço</label>
-        <input type="text" class="form-control required">
-        <div class="error-text">Campo obrigatório</div>
-      </div>
-      <div class="col-md-6">
-        <label>Cidade</label>
-        <input type="text" class="form-control required">
-        <div class="error-text">Campo obrigatório</div>
-      </div>
-      <div class="col-md-6">
-        <label>Telefone</label>
-        <input type="text" class="form-control required telefone">
-        <div class="error-text">Campo obrigatório</div>
-      </div>
-      <div class="col-md-6">
-        <label>E-mail</label>
-        <input type="email" class="form-control required email">
-        <div class="error-text">E-mail inválido</div>
-      </div>
+    <div class="info-box">
+        <b>Processo da ordem de compra:</b><br>
+        Enviar a ordem de compra emitida para análise. Após a análise financeira (poderá ser solicitado um valor de ENTRADA),
+        será necessário o requerimento assinado e carimbado pela empresa (cliente). Após o envio por e-mail do documento assinado
+        e carimbado, será liberado o limite e seguiremos com as instruções para realização da venda.
     </div>
-  </div>
 
-  <!-- FILIAL / FORNECEDOR -->
-  <div class="card">
-    <div class="card-header">Filial / Fornecedor</div>
-    <div class="card-body row g-3">
-      <div class="col-md-6">
-        <label>Nome da Filial</label>
-        <input type="text" class="form-control required">
-        <div class="error-text">Campo obrigatório</div>
-      </div>
-      <div class="col-md-6">
-        <label>Endereço Filial</label>
-        <input type="text" class="form-control required">
-        <div class="error-text">Campo obrigatório</div>
-      </div>
-      <div class="col-md-6">
-        <label>Telefone Filial</label>
-        <input type="text" class="form-control required telefone">
-        <div class="error-text">Campo obrigatório</div>
-      </div>
-      <div class="col-md-6">
-        <label>E-mail Filial</label>
-        <input type="email" class="form-control required email">
-        <div class="error-text">E-mail inválido</div>
-      </div>
-      <div class="col-md-6">
-        <label>Ramal</label>
-        <input type="text" class="form-control required">
-        <div class="error-text">Campo obrigatório</div>
-      </div>
-      <div class="col-md-6">
-        <label>Cidade / Estado Filial</label>
-        <input type="text" class="form-control required">
-        <div class="error-text">Campo obrigatório</div>
-      </div>
+    <!-- Empresa Solicitante -->
+    <h3>Empresa Solicitante</h3>
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label>Empresa</label>
+            <input type="text" class="form-control required" id="cliente_empresa">
+        </div>
+        <div class="col-md-6">
+            <label>Nome do Responsável</label>
+            <input type="text" class="form-control required" id="cliente_responsavel">
+        </div>
+        <div class="col-md-6">
+            <label>CNPJ</label>
+            <input type="text" class="form-control required" id="cliente_cnpj" maxlength="18">
+        </div>
+        <div class="col-md-6">
+            <label>Inscrição Estadual</label>
+            <input type="text" class="form-control required" id="cliente_ie">
+        </div>
+        <div class="col-md-8">
+            <label>Endereço</label>
+            <input type="text" class="form-control required" id="cliente_end">
+        </div>
+        <div class="col-md-4">
+            <label>Cidade / Estado</label>
+            <input type="text" class="form-control required" id="cliente_cidade">
+        </div>
+        <div class="col-md-4">
+            <label>Telefone</label>
+            <input type="text" class="form-control required" id="cliente_tel" maxlength="15">
+        </div>
+        <div class="col-md-8">
+            <label>E-mail</label>
+            <input type="email" class="form-control required" id="cliente_email">
+        </div>
     </div>
-  </div>
 
-  <!-- INCLUSÃO DE PRODUTOS -->
-  <div class="card">
-    <div class="card-header">Inclusão de Produtos</div>
-    <div class="card-body">
-      <table class="table table-bordered align-middle" id="tabelaProdutos">
-        <thead class="table-primary text-center">
-          <tr>
-            <th>Item</th><th>Qtd</th><th>Código</th><th>Descrição</th><th>Preço Unitário (R$)</th><th>Total (R$)</th><th>Ações</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-      <button class="btn btn-success" id="addProduto">Adicionar Produto</button>
+    <!-- Filial / Fornecedor -->
+    <h3 class="mt-4">Filial / Fornecedor</h3>
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label>Nome da Filial</label>
+            <input type="text" class="form-control required" id="filial_nome">
+        </div>
+        <div class="col-md-6">
+            <label>Endereço</label>
+            <input type="text" class="form-control required" id="filial_end">
+        </div>
+        <div class="col-md-6">
+            <label>Telefone</label>
+            <input type="text" class="form-control required" id="filial_tel_resp" maxlength="15">
+        </div>
+        <div class="col-md-6">
+            <label>E-mail</label>
+            <input type="email" class="form-control required" id="filial_email">
+        </div>
+        <div class="col-md-6">
+            <label>Ramal</label>
+            <input type="text" class="form-control" id="filial_ramal">
+        </div>
+        <div class="col-md-6">
+            <label>Cidade / Estado</label>
+            <input type="text" class="form-control required" id="filial_cidade">
+        </div>
     </div>
-  </div>
 
-  <!-- CONDIÇÃO DE PAGAMENTO -->
-  <div class="card">
-    <div class="card-header">Condição de Pagamento</div>
-    <div class="card-body">
-      <input type="text" class="form-control required" id="condicaoPagamento" placeholder="Ex: Boleto em 30 dias">
-      <div class="error-text">Campo obrigatório</div>
+    <!-- Inclusão de Produtos -->
+    <h3 class="mt-4">Inclusão de Produtos</h3>
+    <div class="table-responsive">
+        <table class="table table-bordered align-middle" id="tabelaProdutos">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Qtd</th>
+                    <th>Código</th>
+                    <th>Descrição</th>
+                    <th>Preço Unit (R$)</th>
+                    <th>Total (R$)</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <button class="btn btn-success" id="addProduto">+ Adicionar Produto</button>
     </div>
-  </div>
 
-  <!-- OBSERVAÇÕES -->
-  <div class="card">
-    <div class="card-header">Observações</div>
-    <div class="card-body">
-      <textarea class="form-control" rows="3" id="observacoes"></textarea>
+    <!-- Condição de Pagamento -->
+    <h3 class="mt-4">Condição de Pagamento</h3>
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label>Forma de Pagamento</label>
+            <input type="text" class="form-control required" id="pagamento">
+        </div>
+        <div class="col-md-6">
+            <label>Prazo de Entrega</label>
+            <input type="text" class="form-control required" id="prazo">
+        </div>
     </div>
-  </div>
 
-  <!-- MENSAGEM EXPLICATIVA -->
-  <div class="info-box">
-    <b>Processo da ordem de compra:</b><br>
-    Enviar a ordem de compra emitida para análise, após a realização da análise financeira (terá a possibilidade de solicitação de um valor de ENTRADA), solicitaremos o requerimento assinado e carimbado pela empresa (cliente). Após envio por e-mail do documento assinado e carimbado pela empresa, será liberado o limite e seguiremos com as instruções para realização da venda.
-  </div>
+    <!-- Observações -->
+    <h3 class="mt-4">Observações</h3>
+    <textarea class="form-control" rows="3" id="obs"></textarea>
 
-  <!-- BOTÃO -->
-  <div class="text-center mt-3">
-    <button class="btn btn-primary px-5" id="gerarPDF">Gerar PDF</button>
-  </div>
-
+    <div class="text-center mt-4">
+        <button class="btn btn-primary" id="gerarPdf">Gerar PDF</button>
+    </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
 <script>
-$(document).ready(function(){
+$(document).ready(function () {
 
-  $(".telefone").mask("(00) 00000-0000");
-  $(".cnpj").mask("00.000.000/0000-00");
-
-  // Máscara de moeda
-  $(document).on("input", ".moeda", function(){
-    let v = $(this).val().replace(/\D/g, "");
-    v = (v/100).toFixed(2) + "";
-    v = v.replace(".", ",");
-    v = v.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    $(this).val(v);
-  });
-
-  // Adicionar produto
-  $("#addProduto").click(function(){
-    const row = `
-      <tr>
-        <td class='text-center'></td>
-        <td><input type='number' class='form-control qtd'></td>
-        <td><input type='text' class='form-control cod'></td>
-        <td><input type='text' class='form-control desc'></td>
-        <td><input type='text' class='form-control moeda preco'></td>
-        <td><input type='text' class='form-control tot' readonly></td>
-        <td><button class='btn btn-danger btn-sm remover'>X</button></td>
-      </tr>`;
-    $("#tabelaProdutos tbody").append(row);
-    atualizarItens();
-  });
-
-  $(document).on("click", ".remover", function(){
-    $(this).closest("tr").remove();
-    atualizarItens();
-  });
-
-  function atualizarItens(){
-    $("#tabelaProdutos tbody tr").each(function(i){
-      $(this).find("td:first").text(i+1);
-    });
-  }
-
-  // Cálculo automático total
-  $(document).on("input", ".qtd, .preco", function(){
-    const tr = $(this).closest("tr");
-    const qtd = parseFloat(tr.find(".qtd").val()) || 0;
-    let preco = tr.find(".preco").val().replace(/\./g, "").replace(",", ".");
-    preco = parseFloat(preco) || 0;
-    const tot = qtd * preco;
-    tr.find(".tot").val(tot.toLocaleString("pt-BR", {minimumFractionDigits:2}));
-  });
-
-  // Validação
-  $(".required").on("blur", function(){
-    if(!$(this).val().trim()){
-      $(this).addClass("is-invalid");
-      $(this).next(".error-text").show();
-    } else {
-      $(this).removeClass("is-invalid");
-      $(this).next(".error-text").hide();
-    }
-  });
-
-  // Gerar PDF
-  $("#gerarPDF").click(async function(){
-    const camposVazios = $(".required").filter(function(){ return !$(this).val().trim(); });
-    if(camposVazios.length){
-      camposVazios.addClass("is-invalid").next(".error-text").show();
-      $("html, body").animate({ scrollTop: camposVazios.first().offset().top - 100 }, 500);
-      return;
+    // Máscaras simples
+    function mascaraCNPJ(v) {
+        v = v.replace(/\D/g, "");
+        v = v.replace(/^(\d{2})(\d)/, "$1.$2");
+        v = v.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
+        v = v.replace(/\.(\d{3})(\d)/, ".$1/$2");
+        v = v.replace(/(\d{4})(\d)/, "$1-$2");
+        return v;
     }
 
-    const cliente = {};
-    const filial = {};
-    $(".card").eq(0).find("input").each(function(){ cliente[$(this).prev("label").text()] = $(this).val(); });
-    $(".card").eq(1).find("input").each(function(){ filial[$(this).prev("label").text()] = $(this).val(); });
+    function mascaraTelefone(v) {
+        v = v.replace(/\D/g, "");
+        v = v.replace(/^(\d{2})(\d)/g, "($1) $2");
+        v = v.replace(/(\d{5})(\d)/, "$1-$2");
+        return v;
+    }
 
-    const itens = [];
-    $("#tabelaProdutos tbody tr").each(function(){
-      itens.push({
-        qtd: $(this).find(".qtd").val(),
-        cod: $(this).find(".cod").val(),
-        desc: $(this).find(".desc").val(),
-        preco: $(this).find(".preco").val(),
-        tot: $(this).find(".tot").val()
-      });
+    function formatarMoeda(valor) {
+        valor = valor.replace(/\D/g, "");
+        valor = (valor / 100).toFixed(2) + "";
+        valor = valor.replace(".", ",");
+        valor = valor.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1.");
+        return valor;
+    }
+
+    // Aplicar máscaras
+    $(document).on("input", "#cliente_cnpj", function() {
+        this.value = mascaraCNPJ(this.value);
     });
 
-    const obs = $("#observacoes").val();
-    const pagamento = $("#condicaoPagamento").val();
-    const prazo = "";
-
-    const payload = { cliente, filial, itens, obs, pagamento, prazo };
-
-    const res = await fetch("/gerar_pdf", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
+    $(document).on("input", "#cliente_tel, #filial_tel_resp", function() {
+        this.value = mascaraTelefone(this.value);
     });
 
-    if(!res.ok){ alert("Erro ao gerar PDF."); return; }
+    // Adicionar produto
+    $("#addProduto").click(function () {
+        let index = $("#tabelaProdutos tbody tr").length + 1;
+        $("#tabelaProdutos tbody").append(`
+            <tr>
+                <td>${index}</td>
+                <td><input type="number" class="form-control qtd" min="1"></td>
+                <td><input type="text" class="form-control cod"></td>
+                <td><input type="text" class="form-control desc"></td>
+                <td><input type="text" class="form-control preco"></td>
+                <td><input type="text" class="form-control tot" readonly></td>
+            </tr>
+        `);
+    });
 
-    const blob = await res.blob();
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "Ordem_Compra.pdf";
-    a.click();
-    window.URL.revokeObjectURL(url);
-  });
+    // Formatar e calcular valores
+    $(document).on("input", ".preco, .qtd", function () {
+        let row = $(this).closest("tr");
+        let qtd = parseFloat(row.find(".qtd").val()) || 0;
+        let preco = row.find(".preco").val().replace(/\D/g, "");
 
+        if (preco) {
+            preco = (parseFloat(preco) / 100).toFixed(2);
+            row.find(".preco").val(formatarMoeda(row.find(".preco").val()));
+        }
+
+        let precoNum = parseFloat(row.find(".preco").val().replace(/\./g, "").replace(",", ".")) || 0;
+        let total = qtd * precoNum;
+        row.find(".tot").val(total ? total.toFixed(2).replace(".", ",").replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "");
+    });
+
+    // Geração de PDF
+    $("#gerarPdf").click(function () {
+        let dados = {
+            cliente: {
+                "Empresa": $("#cliente_empresa").val(),
+                "Responsável": $("#cliente_responsavel").val(),
+                "CNPJ": $("#cliente_cnpj").val(),
+                "Inscrição Estadual": $("#cliente_ie").val(),
+                "Endereço": $("#cliente_end").val(),
+                "Cidade/Estado": $("#cliente_cidade").val(),
+                "Telefone": $("#cliente_tel").val(),
+                "E-mail": $("#cliente_email").val()
+            },
+            filial: {
+                "Nome da Filial": $("#filial_nome").val(),
+                "Endereço": $("#filial_end").val(),
+                "Telefone": $("#filial_tel_resp").val(),
+                "E-mail": $("#filial_email").val(),
+                "Ramal": $("#filial_ramal").val(),
+                "Cidade/Estado": $("#filial_cidade").val()
+            },
+            itens: [],
+            obs: $("#obs").val(),
+            pagamento: $("#pagamento").val(),
+            prazo: $("#prazo").val()
+        };
+
+        $("#tabelaProdutos tbody tr").each(function () {
+            let item = {
+                qtd: $(this).find(".qtd").val(),
+                cod: $(this).find(".cod").val(),
+                desc: $(this).find(".desc").val(),
+                preco: $(this).find(".preco").val(),
+                tot: $(this).find(".tot").val()
+            };
+            if (item.qtd || item.cod || item.desc || item.preco) dados.itens.push(item);
+        });
+
+        fetch("/gerar_pdf", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(dados)
+        })
+        .then(response => response.blob())
+        .then(blob => {
+            let url = window.URL.createObjectURL(blob);
+            let a = document.createElement("a");
+            a.href = url;
+            a.download = "Ordem_Compra.pdf";
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+        });
+    });
 });
 </script>
 </body>
