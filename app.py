@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, send_file, jsonify
+from flask import Flask, render_template, request, send_file, jsonify, make_response
 from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors
 from reportlab.lib.units import cm
@@ -34,7 +34,6 @@ def gerar_pdf():
     pagamento = data.get("pagamento", "")
     prazo = data.get("prazo", "")
 
-    # Criação do PDF
     buffer = io.BytesIO()
     doc = SimpleDocTemplate(
         buffer, pagesize=A4,
@@ -65,18 +64,14 @@ def gerar_pdf():
     e.append(Paragraph("<b>EMPRESA SOLICITANTE</b>", st["n"]))
     cliente_data = [[Paragraph(f"<b>{k}</b>", st["n"]), Paragraph(str(v), st["n"])] for k, v in cliente.items()]
     tabela_cliente = Table(cliente_data, colWidths=[4 * cm, 11 * cm])
-    tabela_cliente.setStyle(TableStyle([
-        ("GRID", (0, 0), (-1, -1), 0.4, colors.grey)
-    ]))
+    tabela_cliente.setStyle(TableStyle([("GRID", (0, 0), (-1, -1), 0.4, colors.grey)]))
     e += [tabela_cliente, Spacer(1, 8)]
 
     # Filial / fornecedor
     e.append(Paragraph("<b>FILIAL / FORNECEDOR</b>", st["n"]))
     filial_data = [[Paragraph(f"<b>{k}</b>", st["n"]), Paragraph(str(v), st["n"])] for k, v in filial.items()]
     tabela_filial = Table(filial_data, colWidths=[4 * cm, 11 * cm])
-    tabela_filial.setStyle(TableStyle([
-        ("GRID", (0, 0), (-1, -1), 0.4, colors.grey)
-    ]))
+    tabela_filial.setStyle(TableStyle([("GRID", (0, 0), (-1, -1), 0.4, colors.grey)]))
     e += [tabela_filial, Spacer(1, 8)]
 
     e.append(Paragraph(f"<b>Prazo de Entrega:</b> {prazo}", st["n"]))
@@ -86,7 +81,7 @@ def gerar_pdf():
     e.append(Paragraph("<b>INCLUSÃO DE PRODUTOS</b>", st["center"]))
     e.append(Spacer(1, 6))
 
-    cols = [1.2 * cm, 1.0 * cm, 3.2 * cm, 8.3 * cm, 3.1 * cm, 2.3 * cm]
+    cols = [1.2*cm, 1.0*cm, 3.2*cm, 8.3*cm, 3.1*cm, 2.3*cm]
     data_table = [["ITEM", "QTD", "CÓDIGO", "DESCRIÇÃO", "PREÇO UNIT. (R$)", "TOTAL (R$)"]]
     total = 0
 
@@ -124,19 +119,29 @@ def gerar_pdf():
         e.append(Paragraph(obs, st["n"]))
         e.append(Spacer(1, 12))
 
-    e.append(Paragraph(
-        "A ORDEM DE COMPRA DEVE SER ENVIADA PARA <b>convenios@farmaciassaojoao.com.br</b>",
-        st["small"]
-    ))
+    e.append(Paragraph("A ORDEM DE COMPRA DEVE SER ENVIADA PARA <b>convenios@farmaciassaojoao.com.br</b>", st["small"]))
     e.append(Paragraph("<i>*A via original deve ser entregue na filial da venda*</i>", st["small"]))
     e.append(Spacer(1, 36))
     e.append(Paragraph("Assinatura e carimbo: _________________________________", st["n"]))
 
-    doc.build(e)
+    # Construção final do PDF
+    try:
+        doc.build(e)
+    except Exception as ex:
+        print("Erro ao gerar PDF:", ex)
+        return jsonify({"erro": str(ex)}), 500
 
     buffer.seek(0)
+    pdf_bytes = buffer.getvalue()
+    buffer.close()
+
     nome_arquivo = f"{PDF_PREFIX}_{cliente.get('Empresa', 'Documento').replace(' ', '_')}.pdf"
-    return send_file(buffer, as_attachment=True, download_name=nome_arquivo, mimetype="application/pdf")
+    response = make_response(pdf_bytes)
+    response.headers["Content-Type"] = "application/pdf"
+    response.headers["Content-Disposition"] = f"attachment; filename={nome_arquivo}"
+    response.headers["Content-Length"] = len(pdf_bytes)
+    return response
+
 
 if __name__ == "__main__":
     app.run(debug=True)
