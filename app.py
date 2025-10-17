@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, send_file, jsonify, make_response
+from flask import Flask, render_template, request, send_file, jsonify
 from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors
 from reportlab.lib.units import cm
@@ -34,11 +34,12 @@ def gerar_pdf():
     pagamento = data.get("pagamento", "")
     prazo = data.get("prazo", "")
 
+    # Criar PDF
     buffer = io.BytesIO()
     doc = SimpleDocTemplate(
         buffer, pagesize=A4,
         leftMargin=1.5 * cm, rightMargin=1.5 * cm,
-        topMargin=2 * cm, bottomMargin=2 * cm
+        topMargin=1.2 * cm, bottomMargin=2 * cm   # 🔹 Subido topo
     )
 
     s = getSampleStyleSheet()
@@ -51,38 +52,37 @@ def gerar_pdf():
     }
 
     e = []
-
-    # Logo
+    # 🔹 Subiu a logo e título
     if os.path.exists(LOGO_PATH):
-        logo = Image(LOGO_PATH, width=8 * cm, height=2.5 * cm)
+        logo = Image(LOGO_PATH, width=7.5 * cm, height=2.3 * cm)
         logo.hAlign = "CENTER"
-        e += [logo, Spacer(1, 6)]
+        e += [logo, Spacer(1, 4)]
 
-    e += [Paragraph("<b>ORDEM DE COMPRA</b>", st["title"]), Spacer(1, 10)]
+    e += [Paragraph("<b>ORDEM DE COMPRA</b>", st["title"]), Spacer(1, 6)]
 
-    # Empresa solicitante
-    e.append(Paragraph("<b>EMPRESA SOLICITANTE</b>", st["n"]))
+    # 🔹 Empresa solicitante (centralizado)
+    e.append(Paragraph("<b>EMPRESA SOLICITANTE</b>", st["center"]))
     cliente_data = [[Paragraph(f"<b>{k}</b>", st["n"]), Paragraph(str(v), st["n"])] for k, v in cliente.items()]
     tabela_cliente = Table(cliente_data, colWidths=[4 * cm, 11 * cm])
     tabela_cliente.setStyle(TableStyle([("GRID", (0, 0), (-1, -1), 0.4, colors.grey)]))
-    e += [tabela_cliente, Spacer(1, 8)]
+    e += [tabela_cliente, Spacer(1, 10)]
 
-    # Filial / fornecedor
-    e.append(Paragraph("<b>FILIAL / FORNECEDOR</b>", st["n"]))
+    # 🔹 Filial / Fornecedor (centralizado)
+    e.append(Paragraph("<b>FILIAL / FORNECEDOR</b>", st["center"]))
     filial_data = [[Paragraph(f"<b>{k}</b>", st["n"]), Paragraph(str(v), st["n"])] for k, v in filial.items()]
     tabela_filial = Table(filial_data, colWidths=[4 * cm, 11 * cm])
     tabela_filial.setStyle(TableStyle([("GRID", (0, 0), (-1, -1), 0.4, colors.grey)]))
-    e += [tabela_filial, Spacer(1, 8)]
+    e += [tabela_filial, Spacer(1, 12)]
 
     e.append(Paragraph(f"<b>Prazo de Entrega:</b> {prazo}", st["n"]))
-    e.append(Spacer(1, 14))
+    e.append(Spacer(1, 16))
 
-    # Inclusão de produtos
-    e.append(Paragraph("<b>INCLUSÃO DE PRODUTOS</b>", st["center"]))
-    e.append(Spacer(1, 6))
+    # 🔹 Lista de produtos (renomeado e espaçamento ajustado)
+    e.append(Paragraph("<b>LISTAGEM DE PRODUTOS</b>", st["center"]))
+    e.append(Spacer(1, 8))
 
     cols = [1.2*cm, 1.0*cm, 3.2*cm, 8.3*cm, 3.1*cm, 2.3*cm]
-    data_table = [["ITEM", "QTD", "CÓDIGO", "DESCRIÇÃO", "PREÇO UNIT. (R$)", "TOTAL (R$)"]]
+    data_table = [["ITEM", "QTD", "CÓDIGO", "DESCRIÇÃO", "PREÇO UNIT (R$)", "TOTAL (R$)"]]
     total = 0
 
     for i, item in enumerate(itens, start=1):
@@ -92,8 +92,8 @@ def gerar_pdf():
         preco = float(item["preco"].replace(",", ".")) if item["preco"] else 0
         tot = float(item["tot"].replace(",", ".")) if item["tot"] else 0
         total += tot
-        p_fmt = f"{preco:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
-        t_fmt = f"{tot:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+        p_fmt = f"R$ {preco:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")   # 🔹 Adiciona R$
+        t_fmt = f"R$ {tot:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")     # 🔹 Adiciona R$
         data_table.append([str(i), q, cod, Paragraph(desc, st["tabela"]), p_fmt, t_fmt])
 
     total_fmt = f"{total:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
@@ -107,10 +107,12 @@ def gerar_pdf():
         ("ALIGN", (0, 0), (-1, -1), "CENTER"),
         ("ALIGN", (3, 1), (3, -1), "LEFT"),
         ("ALIGN", (4, 1), (5, -1), "RIGHT"),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 6),  # 🔹 Mais respiro nas linhas
+        ("TOPPADDING", (0, 0), (-1, -1), 4),
     ]))
-    e += [t, Spacer(1, 10)]
+    e += [t, Spacer(1, 20)]  # 🔹 Aumentado espaço após a tabela
 
-    # Pagamento e observações
+    # 🔹 Pagamento e observações
     e.append(Paragraph(f"<b>Condição de Pagamento:</b> Boleto em {pagamento}", st["n"]))
     e.append(Spacer(1, 10))
 
@@ -124,24 +126,10 @@ def gerar_pdf():
     e.append(Spacer(1, 36))
     e.append(Paragraph("Assinatura e carimbo: _________________________________", st["n"]))
 
-    # Construção final do PDF
-    try:
-        doc.build(e)
-    except Exception as ex:
-        print("Erro ao gerar PDF:", ex)
-        return jsonify({"erro": str(ex)}), 500
-
+    doc.build(e)
     buffer.seek(0)
-    pdf_bytes = buffer.getvalue()
-    buffer.close()
-
     nome_arquivo = f"{PDF_PREFIX}_{cliente.get('Empresa', 'Documento').replace(' ', '_')}.pdf"
-    response = make_response(pdf_bytes)
-    response.headers["Content-Type"] = "application/pdf"
-    response.headers["Content-Disposition"] = f"attachment; filename={nome_arquivo}"
-    response.headers["Content-Length"] = len(pdf_bytes)
-    return response
-
+    return send_file(buffer, as_attachment=True, download_name=nome_arquivo, mimetype="application/pdf")
 
 if __name__ == "__main__":
     app.run(debug=True)
