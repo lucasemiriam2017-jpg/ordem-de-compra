@@ -1,301 +1,227 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<title>Ordem de Compra (Web)</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-<style>
-body { background-color: #f8f9fa; padding: 20px; }
-.container { max-width: 950px; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,.1); }
-h5 { margin-top: 30px; }
-.logo { display: block; margin: 0 auto 15px; max-width: 200px; }
-#area-itens { margin-top: 25px; }
-input.is-invalid { border-color: #dc3545 !important; }
-.invalid-feedback {
-  display: none;
-  color: #dc3545;
-  font-size: 0.9em;
-  margin-top: 2px;
-}
-input.is-invalid + .invalid-feedback {
-  display: block;
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ordem de Compra</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body {
+      background-color: #f5f7fb;
+      font-family: "Segoe UI", sans-serif;
+    }
+
+    .card {
+      border-radius: 15px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      margin-bottom: 25px;
+    }
+
+    .card-header {
+      background-color: #004C99;
+      color: white;
+      font-weight: 600;
+      text-align: center;
+      border-top-left-radius: 15px;
+      border-top-right-radius: 15px;
+    }
+
+    label {
+      font-weight: 500;
+    }
+
+    .form-control:focus {
+      border-color: #004C99;
+      box-shadow: 0 0 0 0.15rem rgba(0, 76, 153, 0.25);
+    }
+
+    .is-invalid {
+      border-color: #dc3545 !important;
+      box-shadow: 0 0 0 0.15rem rgba(220, 53, 69, 0.25);
+    }
+
+    .invalid-feedback {
+      display: none;
+      color: #dc3545;
+      font-size: 0.8em;
+    }
+
+    .invalid-feedback.active {
+      display: block;
+    }
+
+    .btn-primary {
+      background-color: #004C99;
+      border-color: #004C99;
+    }
+
+    .btn-primary:hover {
+      background-color: #003366;
+    }
+
+    .info-icon {
+      cursor: pointer;
+      color: #004C99;
+      margin-left: 5px;
+    }
+
+    .info-icon:hover {
+      color: #007BFF;
+    }
+
+    .alert-info {
+      background-color: #e8f1fc;
+      border: 1px solid #bcd0f7;
+      color: #004C99;
+    }
+  </style>
 </head>
 <body>
-<div class="container">
-  <img src="/static/logo.png" alt="Logo" class="logo">
-  <h3 class="text-center mb-4">Ordem de Compra — Emissão (PDF)</h3>
+  <div class="container mt-4 mb-5">
+    <h3 class="text-center mb-4 fw-bold text-primary">Ordem de Compra</h3>
 
-  <!-- Empresa solicitante -->
-  <h5>Empresa Solicitante</h5>
-  <div class="row">
-    <div class="col-md-6">
-      <input class="form-control mb-1" id="Empresa" placeholder="Empresa" required>
-      <div class="invalid-feedback">⚠️ Preencha este campo.</div>
+    <!-- EMPRESA SOLICITANTE -->
+    <div class="card">
+      <div class="card-header">Empresa Solicitante</div>
+      <div class="card-body row g-3">
+        <div class="col-md-6">
+          <label>Empresa:</label>
+          <input type="text" id="cliente_empresa" class="form-control" required />
+          <div class="invalid-feedback">Preencha este campo.</div>
+        </div>
+        <div class="col-md-6">
+          <label>Nome do Responsável:</label>
+          <input type="text" id="cliente_resp" class="form-control" required />
+          <div class="invalid-feedback">Preencha este campo.</div>
+        </div>
+        <div class="col-md-6">
+          <label>CNPJ:</label>
+          <input type="text" id="cliente_cnpj" class="form-control" maxlength="18" oninput="mascaraCNPJ(this)" required />
+          <div class="invalid-feedback">Preencha um CNPJ válido.</div>
+        </div>
+        <div class="col-md-6">
+          <label>Inscrição Estadual:</label>
+          <input type="text" id="cliente_ie" class="form-control" required />
+          <div class="invalid-feedback">Preencha este campo.</div>
+        </div>
+        <div class="col-md-8">
+          <label>Endereço:</label>
+          <input type="text" id="cliente_end" class="form-control" required />
+          <div class="invalid-feedback">Preencha este campo.</div>
+        </div>
+        <div class="col-md-4">
+          <label>Cidade/Estado:</label>
+          <input type="text" id="cliente_cidade" class="form-control" required />
+          <div class="invalid-feedback">Preencha este campo.</div>
+        </div>
+        <div class="col-md-6">
+          <label>Telefone:</label>
+          <input type="text" id="cliente_tel" class="form-control" maxlength="15" oninput="mascaraTelefone(this)" required />
+          <div class="invalid-feedback">Preencha um telefone válido.</div>
+        </div>
+        <div class="col-md-6">
+          <label>E-mail:</label>
+          <input type="email" id="cliente_email" class="form-control" required />
+          <div class="invalid-feedback">Preencha um e-mail válido.</div>
+        </div>
+      </div>
     </div>
-    <div class="col-md-6">
-      <input class="form-control mb-1" id="CNPJ" placeholder="CNPJ" required>
-      <div class="invalid-feedback">⚠️ Preencha este campo.</div>
+
+    <!-- FILIAL / FORNECEDOR -->
+    <div class="card">
+      <div class="card-header">Filial / Fornecedor</div>
+      <div class="card-body row g-3">
+        <div class="col-md-6">
+          <label>Nome da Filial:</label>
+          <input type="text" id="filial_nome" class="form-control" required />
+          <div class="invalid-feedback">Preencha este campo.</div>
+        </div>
+        <div class="col-md-6">
+          <label>Endereço Filial:</label>
+          <input type="text" id="filial_end" class="form-control" required />
+          <div class="invalid-feedback">Preencha este campo.</div>
+        </div>
+        <div class="col-md-6">
+          <label>Telefone Filial:</label>
+          <input type="text" id="filial_tel" class="form-control" maxlength="15" oninput="mascaraTelefone(this)" required />
+          <div class="invalid-feedback">Preencha este campo.</div>
+        </div>
+        <div class="col-md-6">
+          <label>E-mail Filial:</label>
+          <input type="email" id="filial_email" class="form-control" required />
+          <div class="invalid-feedback">Preencha um e-mail válido.</div>
+        </div>
+        <div class="col-md-4">
+          <label>Ramal:</label>
+          <input type="text" id="filial_ramal" class="form-control" required />
+          <div class="invalid-feedback">Preencha este campo.</div>
+        </div>
+        <div class="col-md-8">
+          <label>Cidade/Estado:</label>
+          <input type="text" id="filial_cidade" class="form-control" required />
+          <div class="invalid-feedback">Preencha este campo.</div>
+        </div>
+      </div>
     </div>
-    <div class="col-md-6">
-      <input class="form-control mb-1" id="Inscrição Estadual" placeholder="Inscrição Estadual" required>
-      <div class="invalid-feedback">⚠️ Preencha este campo.</div>
+
+    <!-- CONDIÇÃO DE PAGAMENTO / PRAZO -->
+    <div class="card">
+      <div class="card-header">Condição de Pagamento / Prazo de Entrega</div>
+      <div class="card-body row g-3">
+        <div class="col-md-6">
+          <label>Condição de Pagamento:</label>
+          <input type="text" id="pagamento" class="form-control" required />
+          <div class="invalid-feedback">Preencha este campo.</div>
+        </div>
+        <div class="col-md-6">
+          <label>Prazo de Entrega:</label>
+          <input type="text" id="prazo" class="form-control" required />
+          <div class="invalid-feedback">Preencha este campo.</div>
+        </div>
+      </div>
     </div>
-    <div class="col-md-6">
-      <input class="form-control mb-1" id="Endereço" placeholder="Endereço" required>
-      <div class="invalid-feedback">⚠️ Preencha este campo.</div>
+
+    <!-- INCLUSÃO DE PRODUTOS -->
+    <div class="card">
+      <div class="card-header">Inclusão de Produtos</div>
+      <div class="card-body">
+        <table class="table table-bordered" id="tabelaProdutos">
+          <thead class="table-primary text-center">
+            <tr>
+              <th>Item</th>
+              <th>Qtd</th>
+              <th>Código</th>
+              <th>Descrição</th>
+              <th>Preço Unitário (R$)</th>
+              <th>Total (R$)</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <button class="btn btn-success btn-sm" onclick="adicionarLinha()">Adicionar Produto</button>
+      </div>
     </div>
-    <div class="col-md-6">
-      <input class="form-control mb-1" id="Cidade/Estado" placeholder="Cidade/Estado" required>
-      <div class="invalid-feedback">⚠️ Preencha este campo.</div>
+
+    <!-- OBSERVAÇÕES -->
+    <div class="card">
+      <div class="card-header">Observações</div>
+      <div class="card-body">
+        <textarea id="obs" rows="3" class="form-control" placeholder="Opcional"></textarea>
+      </div>
     </div>
-    <div class="col-md-6">
-      <input class="form-control mb-1" id="Telefone" placeholder="Telefone" required>
-      <div class="invalid-feedback">⚠️ Preencha este campo.</div>
-    </div>
-    <div class="col-md-6">
-      <input type="email" class="form-control mb-1" id="E-mail" placeholder="E-mail (para recebimento de boleto)" required>
-      <div class="invalid-feedback">⚠️ Digite um e-mail válido.</div>
-    </div>
-    <div class="col-md-6">
-      <input class="form-control mb-1" id="Nome do Responsável" placeholder="Nome do Responsável" required>
-      <div class="invalid-feedback">⚠️ Preencha este campo.</div>
-    </div>
-    <div class="col-md-6">
-      <input class="form-control mb-1" id="Data" placeholder="Data" required>
-      <div class="invalid-feedback">⚠️ Preencha este campo.</div>
+
+    <!-- MENSAGEM EXPLICATIVA + BOTÕES -->
+    <div class="text-center mt-4">
+      <div class="alert alert-info text-start" style="font-size: 0.9rem; border-radius: 10px;">
+        💡 <b>Processo da ordem de compra:</b><br>
+        Enviar a ordem de compra emitida para análise, após a realização da análise financeira (terá a possibilidade de solicitação de um valor de ENTRADA), solicitaremos o requerimento assinado e carimbado pela empresa (cliente). Após envio por e-mail do documento assinado e carimbado pela empresa, será liberado o limite e seguiremos com as instruções para realização da venda.
+      </div>
+      <button class="btn btn-primary" onclick="gerarPDF()">Gerar PDF</button>
+      <button class="btn btn-secondary" onclick="limpar()">Limpar</button>
     </div>
   </div>
 
-  <!-- Filial / Fornecedor -->
-  <h5>Filial / Fornecedor</h5>
-  <div class="row">
-    <div class="col-md-6">
-      <input class="form-control mb-1" id="Nome Filial" placeholder="Nome Filial" required>
-      <div class="invalid-feedback">⚠️ Preencha este campo.</div>
-    </div>
-    <div class="col-md-6">
-      <input class="form-control mb-1" id="Endereço Filial" placeholder="Endereço Filial" required>
-      <div class="invalid-feedback">⚠️ Preencha este campo.</div>
-    </div>
-    <div class="col-md-6">
-      <input class="form-control mb-1" id="Telefone Filial" placeholder="Telefone Filial" required>
-      <div class="invalid-feedback">⚠️ Preencha este campo.</div>
-    </div>
-    <div class="col-md-6">
-      <input type="email" class="form-control mb-1" id="E-mail Filial" placeholder="E-mail Filial" required>
-      <div class="invalid-feedback">⚠️ Digite um e-mail válido.</div>
-    </div>
-    <div class="col-md-6">
-      <input class="form-control mb-1" id="Ramal" placeholder="Ramal" required>
-      <div class="invalid-feedback">⚠️ Preencha este campo.</div>
-    </div>
-    <div class="col-md-6">
-      <input class="form-control mb-1" id="Cidade/Estado Filial" placeholder="Cidade/Estado Filial" required>
-      <div class="invalid-feedback">⚠️ Preencha este campo.</div>
-    </div>
-  </div>
-
-  <div class="mb-3">
-    <label>Prazo de Entrega</label>
-    <input class="form-control" id="prazo" placeholder="Prazo de entrega" value="IMEDIATO" required>
-    <div class="invalid-feedback">⚠️ Preencha este campo.</div>
-  </div>
-
-  <hr>
-
-  <!-- Inclusão de Produtos -->
-  <h5>Inclusão de Produtos</h5>
-  <div id="area-itens">
-    <div class="row mb-3">
-      <div class="col"><input type="number" min="1" class="form-control" id="qtd" placeholder="Qtd" required></div>
-      <div class="col"><input class="form-control" id="cod" placeholder="Código" required></div>
-      <div class="col"><input class="form-control" id="desc" placeholder="Descrição" required></div>
-      <div class="col"><input type="text" class="form-control valor-item" id="valor" placeholder="Valor (R$)" required></div>
-      <div class="col"><button class="btn btn-success" onclick="addItem()">Adicionar</button></div>
-    </div>
-
-    <table class="table table-sm" id="tabela_itens">
-      <thead><tr><th>Qtd</th><th>Código</th><th>Descrição</th><th>Valor (R$)</th><th>Ações</th></tr></thead>
-      <tbody></tbody>
-    </table>
-  </div>
-
-  <!-- Pagamento -->
-  <h5>Condição de Pagamento</h5>
-  <div class="form-check form-check-inline">
-    <input class="form-check-input" type="radio" name="pagamento" value="1x" checked>
-    <label class="form-check-label">Boleto em 1x</label>
-  </div>
-  <div class="form-check form-check-inline">
-    <input class="form-check-input" type="radio" name="pagamento" value="2x">
-    <label class="form-check-label">Boleto em 2x</label>
-  </div>
-  <div class="form-check form-check-inline">
-    <input class="form-check-input" type="radio" name="pagamento" value="3x">
-    <label class="form-check-label">Boleto em 3x</label>
-  </div>
-
-  <!-- Observações -->
-  <div class="mt-3">
-    <label>Observações</label>
-    <input class="form-control" id="obs" placeholder="Observações (opcional)">
-  </div>
-
-  <div class="text-center mt-4">
-    <button class="btn btn-primary" onclick="gerarPDF()">Gerar PDF</button>
-    <button class="btn btn-secondary" onclick="limpar()">Limpar</button>
-  </div>
-</div>
-
-<script>
-// Máscaras e Data
-document.addEventListener("DOMContentLoaded", function() {
-  const cnpj = document.getElementById("CNPJ");
-  const telefone = document.getElementById("Telefone");
-  const telefoneFilial = document.getElementById("Telefone Filial");
-  const data = document.getElementById("Data");
-
-  function aplicarMascaraCNPJ(v) {
-    return v.replace(/\D/g, "")
-            .replace(/^(\d{2})(\d)/, "$1.$2")
-            .replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3")
-            .replace(/\.(\d{3})(\d)/, ".$1/$2")
-            .replace(/(\d{4})(\d)/, "$1-$2")
-            .slice(0, 18);
-  }
-
-  function aplicarMascaraTelefone(v) {
-    return v.replace(/\D/g, "")
-            .replace(/^(\d{2})(\d)/g, "($1) $2")
-            .replace(/(\d{5})(\d{4})$/, "$1-$2")
-            .slice(0, 15);
-  }
-
-  function aplicarMascaraData(v) {
-    return v.replace(/\D/g, "")
-            .replace(/^(\d{2})(\d)/, "$1/$2")
-            .replace(/(\d{2})\/(\d{2})(\d)/, "$1/$2/$3")
-            .slice(0, 10);
-  }
-
-  cnpj.addEventListener("input", e => e.target.value = aplicarMascaraCNPJ(e.target.value));
-  telefone.addEventListener("input", e => e.target.value = aplicarMascaraTelefone(e.target.value));
-  telefoneFilial.addEventListener("input", e => e.target.value = aplicarMascaraTelefone(e.target.value));
-  data.addEventListener("input", e => e.target.value = aplicarMascaraData(e.target.value));
-  data.value = new Date().toLocaleDateString("pt-BR");
-});
-
-// Máscara de valor R$
-document.addEventListener("input", function (e) {
-  if (e.target && e.target.classList.contains("valor-item")) {
-    let valor = e.target.value.replace(/\D/g, "");
-    if (valor === "") return e.target.value = "";
-    valor = (parseInt(valor, 10) / 100).toFixed(2) + "";
-    valor = valor.replace(".", ",");
-    valor = valor.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    e.target.value = valor;
-  }
-});
-
-// Validação individual
-document.querySelectorAll("input[required]").forEach(input => {
-  input.addEventListener("blur", () => {
-    if (!input.value.trim()) input.classList.add("is-invalid");
-  });
-  input.addEventListener("input", () => {
-    if (input.value.trim()) input.classList.remove("is-invalid");
-  });
-});
-
-let itens = [];
-
-function addItem() {
-  const q = document.getElementById("qtd").value;
-  const c = document.getElementById("cod").value;
-  const d = document.getElementById("desc").value;
-  const v = document.getElementById("valor").value;
-  if (!q || !c || !d || !v) return;
-  const num = parseFloat(v.replace(/\./g, "").replace(",", "."));
-  const tot = (parseFloat(q) * num).toFixed(2);
-  itens.push({ qtd: q, cod: c, desc: d, preco: v, tot: tot });
-  atualizarTabela();
-  ["qtd","cod","desc","valor"].forEach(id => document.getElementById(id).value="");
-}
-
-function atualizarTabela() {
-  const tbody = document.querySelector("#tabela_itens tbody");
-  tbody.innerHTML = "";
-  itens.forEach((it, i) => {
-    tbody.innerHTML += `<tr>
-      <td>${it.qtd}</td><td>${it.cod}</td><td>${it.desc}</td><td>${it.preco}</td>
-      <td><button class="btn btn-sm btn-danger" onclick="removerItem(${i})">X</button></td></tr>`;
-  });
-}
-
-function removerItem(i) {
-  itens.splice(i, 1);
-  atualizarTabela();
-}
-
-function limpar() {
-  document.querySelectorAll("input").forEach(i => {
-    i.value = "";
-    i.classList.remove("is-invalid");
-  });
-  document.getElementById("Data").value = new Date().toLocaleDateString("pt-BR");
-  itens = [];
-  atualizarTabela();
-}
-
-async function gerarPDF() {
-  const camposObrigatorios = [
-    "Empresa","CNPJ","Inscrição Estadual","Endereço","Cidade/Estado","Telefone","E-mail",
-    "Nome do Responsável","Data","Nome Filial","Endereço Filial","Telefone Filial",
-    "E-mail Filial","Ramal","Cidade/Estado Filial","prazo"
-  ];
-
-  let erro = false;
-  for (const id of camposObrigatorios) {
-    const el = document.getElementById(id);
-    if (!el.value.trim()) {
-      el.classList.add("is-invalid");
-      erro = true;
-    }
-  }
-
-  if (erro) return;
-
-  if (itens.length === 0) {
-    alert("⚠️ Adicione ao menos um item antes de gerar o PDF.");
-    return;
-  }
-
-  const cliente = {};
-  ["Empresa","CNPJ","Inscrição Estadual","Endereço","Cidade/Estado","Telefone","E-mail","Nome do Responsável","Data"]
-    .forEach(id => cliente[id] = document.getElementById(id).value);
-
-  const filial = {};
-  ["Nome Filial","Endereço Filial","Telefone Filial","E-mail Filial","Ramal","Cidade/Estado Filial"]
-    .forEach(id => filial[id] = document.getElementById(id).value);
-
-  const pagamento = document.querySelector("input[name='pagamento']:checked").value;
-  const payload = { cliente, filial, itens, obs: document.getElementById("obs").value, pagamento, prazo: document.getElementById("prazo").value };
-
-  const resp = await fetch("/gerar_pdf", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
-  });
-
-  const blob = await resp.blob();
-  const url = window.URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "Ordem_Compra.pdf";
-  a.click();
-}
-</script>
+  <script src="/static/script.js"></script>
 </body>
 </html>
