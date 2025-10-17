@@ -62,13 +62,13 @@ def gerar_pdf():
     for c, v in filial.items():
         e.append(Paragraph(f"<b>{c}:</b> {v}", st["n"]))
     e.append(Paragraph(f"<b>Prazo de Entrega:</b> {prazo}", st["n"]))
-    e.append(Spacer(1, 14))  # <-- mais espaço antes da lista de produtos
+    e.append(Spacer(1, 14))
 
     # Lista de produtos
     e.append(Paragraph("<b>LISTA DE PRODUTOS</b>", st["center"]))
     e.append(Spacer(1, 6))
 
-    cols = [1.2*cm, 1.0*cm, 3.2*cm, 8.3*cm, 3.1*cm, 2.3*cm]  # descrição um pouco menor
+    cols = [1.2*cm, 1.0*cm, 3.2*cm, 8.3*cm, 3.1*cm, 2.3*cm]
     data_table = [["ITEM", "QTD", "CÓDIGO", "DESCRIÇÃO", "PREÇO UNIT (R$)", "TOTAL (R$)"]]
     total = 0
 
@@ -90,7 +90,7 @@ def gerar_pdf():
     t.setStyle(TableStyle([
         ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#004C99")),
         ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
-        ("GRID", (0, 0), (-1, -1), 0.6, colors.grey),  # linhas de grade em toda a tabela
+        ("GRID", (0, 0), (-1, -1), 0.6, colors.grey),
         ("ALIGN", (0, 0), (-1, -1), "CENTER"),
         ("ALIGN", (3, 1), (3, -1), "LEFT"),
         ("ALIGN", (4, 1), (5, -1), "RIGHT"),
@@ -100,20 +100,18 @@ def gerar_pdf():
 
     # Condição de pagamento
     e.append(Paragraph(f"<b>Condição de Pagamento:</b> Boleto em {pagamento}", st["n"]))
-    e.append(Spacer(1, 12))  # +1 linha de espaço
+    e.append(Spacer(1, 12))
 
     # Observações
     if obs:
         e.append(Paragraph("<b>OBSERVAÇÕES:</b>", st["n"]))
         e.append(Paragraph(obs, st["n"]))
-        e.append(Spacer(1, 12))  # +1 linha de espaço
+        e.append(Spacer(1, 12))
 
-    # Texto de envio
+    # Texto final
     e.append(Paragraph("A ORDEM DE COMPRA DEVE SER ENVIADA PARA <b>convenios@farmaciassaojoao.com.br</b>", st["small"]))
     e.append(Paragraph("<i>*A via original deve ser entregue na filial da venda*</i>", st["small"]))
-    e.append(Spacer(1, 36))  # +5 linhas de espaço (~6pt x 6)
-
-    # Assinatura
+    e.append(Spacer(1, 36))
     e.append(Paragraph("Assinatura e carimbo: _________________________________", st["n"]))
 
     doc.build(e)
@@ -124,9 +122,3 @@ def gerar_pdf():
 
 if __name__ == "__main__":
     app.run(debug=True)
-
-
-
-
-
-
