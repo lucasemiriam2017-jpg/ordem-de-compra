@@ -164,7 +164,6 @@ input.is-invalid + .invalid-feedback {
 </div>
 
 <script>
-// === Máscaras e Validação ===
 document.addEventListener("DOMContentLoaded", function() {
   const cnpj = document.getElementById("CNPJ");
   const telefone = document.getElementById("Telefone");
@@ -193,16 +192,6 @@ document.addEventListener("DOMContentLoaded", function() {
   data.value = new Date().toLocaleDateString("pt-BR");
 });
 
-// === Validação suave ===
-document.querySelectorAll("input[required]").forEach(input => {
-  input.addEventListener("blur", () => {
-    if (!input.value.trim()) input.classList.add("is-invalid");
-  });
-  input.addEventListener("input", () => {
-    if (input.value.trim()) input.classList.remove("is-invalid");
-  });
-});
-
 // === Máscara de valor R$ ===
 document.addEventListener("input", function(e) {
   if (e.target && e.target.classList.contains("valor-item")) {
@@ -212,6 +201,16 @@ document.addEventListener("input", function(e) {
     valor = valor.replace(".", ",").replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     e.target.value = valor;
   }
+});
+
+// === Validação suave ===
+document.querySelectorAll("input[required]").forEach(input => {
+  input.addEventListener("blur", () => {
+    if (!input.value.trim()) input.classList.add("is-invalid");
+  });
+  input.addEventListener("input", () => {
+    if (input.value.trim()) input.classList.remove("is-invalid");
+  });
 });
 
 // === Controle dos Itens ===
@@ -255,6 +254,7 @@ function limpar() {
   atualizarTabela();
 }
 
+// === Gerar PDF com rolagem até o erro ===
 async function gerarPDF() {
   const camposObrigatorios = [
     "Empresa","CNPJ","Inscrição Estadual","Endereço","Cidade/Estado","Telefone","E-mail",
@@ -262,16 +262,20 @@ async function gerarPDF() {
     "E-mail Filial","Ramal","Cidade/Estado Filial","prazo"
   ];
 
-  let erro = false;
+  let primeiroErro = null;
   for (const id of camposObrigatorios) {
     const el = document.getElementById(id);
     if (!el.value.trim()) {
       el.classList.add("is-invalid");
-      erro = true;
+      if (!primeiroErro) primeiroErro = el;
     }
   }
 
-  if (erro) return;
+  if (primeiroErro) {
+    primeiroErro.scrollIntoView({ behavior: "smooth", block: "center" });
+    primeiroErro.focus();
+    return;
+  }
 
   if (itens.length === 0) {
     alert("⚠️ Adicione ao menos um item antes de gerar o PDF.");
