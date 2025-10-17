@@ -161,7 +161,10 @@ function atualizarEventos() {
     inp.addEventListener("input", calcularTotais);
   });
   document.querySelectorAll(".preco").forEach(inp => {
-    inp.addEventListener("input", e => e.target.value = formatarValor(e.target.value));
+    inp.addEventListener("input", e => {
+      e.target.value = formatarValor(e.target.value);
+      calcularTotais(); // 🔥 recalcula total ao alterar o preço
+    });
   });
 }
 
