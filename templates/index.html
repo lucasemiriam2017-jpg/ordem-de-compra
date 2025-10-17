@@ -1,267 +1,333 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <title>Ordem de Compra</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    body {
-      background: #f5f7fa;
-      font-family: "Segoe UI", sans-serif;
-    }
-    .container {
-      background: white;
-      padding: 25px 30px;
-      border-radius: 15px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-      margin-top: 30px;
-      margin-bottom: 30px;
-    }
-    h4, h5 {
-      margin-top: 20px;
-      color: #333;
-      font-weight: 600;
-    }
-    input:focus, textarea:focus, select:focus {
-      border-color: #0d6efd !important;
-      box-shadow: 0 0 6px rgba(13,110,253,0.3) !important;
-    }
-    input.is-invalid {
-      border-color: #dc3545 !important;
-      box-shadow: 0 0 6px rgba(220,53,69,0.4) !important;
-    }
-    .alert-campos {
-      display: none;
-      margin-top: 10px;
-      background: #dc3545;
-      color: white;
-      border-radius: 10px;
-      padding: 10px 15px;
-      font-weight: 500;
-    }
-    .btn-primary {
-      border-radius: 10px;
-      padding: 10px 25px;
-    }
-    table {
-      margin-top: 15px;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Ordem de Compra (Web)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+<style>
+body { background-color: #f8f9fa; padding: 20px; }
+.container { max-width: 950px; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,.1); }
+h5 { margin-top: 30px; }
+.logo { display: block; margin: 0 auto 15px; max-width: 200px; }
+#area-itens { margin-top: 25px; }
+
+/* estilos para campos inválidos / válidos */
+input.invalid, textarea.invalid {
+  border-color: #dc3545 !important;
+  box-shadow: 0 0 0 .15rem rgba(220,53,69,.15) !important;
+}
+input.valid, textarea.valid {
+  border-color: #198754 !important;
+  box-shadow: 0 0 0 .15rem rgba(25,135,84,.12) !important;
+}
+
+/* espaço do alerta de erro */
+#alert-validation { display:none; margin-bottom: 16px; }
+</style>
 </head>
 <body>
 <div class="container">
-  <h4 class="mb-3">Cadastro de Ordem de Compra</h4>
+  <img src="/static/logo.png" alt="Logo" class="logo">
+  <h3 class="text-center mb-4">Ordem de Compra — Emissão (PDF)</h3>
 
-  <form id="ordemForm" onsubmit="gerarPDF(); return false;">
+  <!-- Area de alerta custom -->
+  <div id="alert-validation" class="alert alert-danger" role="alert"></div>
 
-    <!-- Empresa Solicitante -->
-    <h5>Empresa Solicitante</h5>
-    <div class="row">
-      <div class="col-md-6"><input class="form-control mb-2" id="Empresa" placeholder="Empresa" required></div>
-      <div class="col-md-6"><input class="form-control mb-2" id="CNPJ" placeholder="CNPJ" required></div>
-      <div class="col-md-6"><input class="form-control mb-2" id="Inscrição Estadual" placeholder="Inscrição Estadual" required></div>
-      <div class="col-md-6"><input class="form-control mb-2" id="Endereço" placeholder="Endereço" required></div>
-      <div class="col-md-6"><input class="form-control mb-2" id="Cidade/Estado" placeholder="Cidade/Estado" required></div>
-      <div class="col-md-6"><input class="form-control mb-2" id="Telefone" placeholder="Telefone" required></div>
-      <div class="col-md-6"><input class="form-control mb-2" id="E-mail" type="email" placeholder="E-mail" required></div>
-      <div class="col-md-6"><input class="form-control mb-2" id="Data" placeholder="Data" required></div>
-      <div class="col-md-6"><input class="form-control mb-2" id="Nome do Responsável" placeholder="Nome do Responsável" required></div>
+  <!-- EMPRESA SOLICITANTE -->
+  <h5>Empresa Solicitante</h5>
+  <div class="row">
+    <div class="col-md-6"><input class="form-control mb-2" id="Empresa" placeholder="Empresa" required></div>
+    <div class="col-md-6"><input class="form-control mb-2" id="CNPJ" placeholder="CNPJ" required></div>
+    <div class="col-md-6"><input class="form-control mb-2" id="Inscrição Estadual" placeholder="Inscrição Estadual" required></div>
+    <div class="col-md-6"><input class="form-control mb-2" id="Endereço" placeholder="Endereço" required></div>
+    <div class="col-md-6"><input class="form-control mb-2" id="Cidade/Estado" placeholder="Cidade/Estado" required></div>
+    <div class="col-md-6"><input class="form-control mb-2" id="Telefone" placeholder="Telefone" required></div>
+    <div class="col-md-6"><input class="form-control mb-2" id="E-mail" placeholder="E-mail" type="email" required></div>
+    <div class="col-md-6"><input class="form-control mb-2" id="Data" placeholder="Data" required></div>
+    <div class="col-md-6"><input class="form-control mb-2" id="Nome do Responsável" placeholder="Nome do Responsável" required></div>
+  </div>
+
+  <!-- FILIAL / FORNECEDOR -->
+  <h5>Filial / Fornecedor</h5>
+  <div class="row">
+    <div class="col-md-6"><input class="form-control mb-2" id="Nome Filial" placeholder="Nome Filial" required></div>
+    <div class="col-md-6"><input class="form-control mb-2" id="Endereço Filial" placeholder="Endereço Filial" required></div>
+    <div class="col-md-6"><input class="form-control mb-2" id="Telefone Filial" placeholder="Telefone Filial" required></div>
+    <div class="col-md-6"><input class="form-control mb-2" id="E-mail Filial" placeholder="E-mail Filial" type="email" required></div>
+    <div class="col-md-6"><input class="form-control mb-2" id="Ramal" placeholder="Ramal" required></div>
+    <div class="col-md-6"><input class="form-control mb-2" id="Cidade/Estado Filial" placeholder="Cidade/Estado Filial" required></div>
+  </div>
+
+  <div class="mb-3">
+    <label>Prazo de Entrega</label>
+    <input class="form-control" id="prazo" placeholder="Prazo de entrega" value="IMEDIATO" required>
+  </div>
+
+  <hr>
+
+  <!-- ITENS -->
+  <h5>Lançamento de Produtos</h5>
+  <div id="area-itens">
+    <div class="row mb-3">
+      <div class="col"><input class="form-control" id="qtd" placeholder="Qtd" type="number" min="1"></div>
+      <div class="col"><input class="form-control" id="cod" placeholder="Código"></div>
+      <div class="col"><input class="form-control" id="desc" placeholder="Descrição"></div>
+      <div class="col"><input class="form-control" id="preco" placeholder="Preço Unitário" type="text"></div>
+      <div class="col"><button class="btn btn-success" onclick="addItem()">Adicionar</button></div>
     </div>
 
-    <!-- Filial / Fornecedor -->
-    <h5>Filial / Fornecedor</h5>
-    <div class="row">
-      <div class="col-md-6"><input class="form-control mb-2" id="Nome Filial" placeholder="Nome Filial" required></div>
-      <div class="col-md-6"><input class="form-control mb-2" id="Endereço Filial" placeholder="Endereço Filial" required></div>
-      <div class="col-md-6"><input class="form-control mb-2" id="Telefone Filial" placeholder="Telefone Filial" required></div>
-      <div class="col-md-6"><input class="form-control mb-2" id="E-mail Filial" type="email" placeholder="E-mail Filial" required></div>
-      <div class="col-md-6"><input class="form-control mb-2" id="Ramal" placeholder="Ramal" required></div>
-      <div class="col-md-6"><input class="form-control mb-2" id="Cidade/Estado Filial" placeholder="Cidade/Estado Filial" required></div>
-    </div>
-
-    <!-- Itens -->
-    <h5>Itens</h5>
-    <div class="row g-2">
-      <div class="col-md-4"><input class="form-control" id="descricao" placeholder="Descrição" required></div>
-      <div class="col-md-2"><input type="number" min="1" class="form-control" id="quantidade" placeholder="Qtd" required></div>
-      <div class="col-md-2"><input type="text" class="form-control valor-item" id="valor" placeholder="Valor (R$)" required></div>
-      <div class="col-md-2 d-grid"><button type="button" class="btn btn-success" onclick="adicionarItem()">Adicionar</button></div>
-    </div>
-
-    <table class="table table-striped" id="tabelaItens">
-      <thead><tr><th>Descrição</th><th>Qtd</th><th>Valor (R$)</th><th>Total (R$)</th><th></th></tr></thead>
+    <table class="table table-sm" id="tabela_itens">
+      <thead><tr><th>Qtd</th><th>Código</th><th>Descrição</th><th>Preço Unit (R$)</th><th>Ações</th></tr></thead>
       <tbody></tbody>
     </table>
+  </div>
 
-    <div class="alert-campos" id="alertCampos"></div>
+  <h5>Condição de Pagamento</h5>
+  <div class="form-check form-check-inline">
+    <input class="form-check-input" type="radio" name="pagamento" value="1x" checked>
+    <label class="form-check-label">Boleto em 1x</label>
+  </div>
+  <div class="form-check form-check-inline">
+    <input class="form-check-input" type="radio" name="pagamento" value="2x">
+    <label class="form-check-label">Boleto em 2x</label>
+  </div>
+  <div class="form-check form-check-inline">
+    <input class="form-check-input" type="radio" name="pagamento" value="3x">
+    <label class="form-check-label">Boleto em 3x</label>
+  </div>
 
-    <div class="mt-3">
-      <label>Observações</label>
-      <textarea class="form-control" id="obs" rows="3" placeholder="Opcional"></textarea>
-    </div>
+  <div class="mt-3">
+    <label>Observações</label>
+    <input class="form-control" id="obs" placeholder="Observações (opcional)">
+  </div>
 
-    <div class="d-flex justify-content-end mt-4">
-      <button type="submit" class="btn btn-primary">Gerar PDF</button>
-    </div>
-
-  </form>
+  <div class="text-center mt-4">
+    <button class="btn btn-primary" onclick="gerarPDF()">Gerar PDF</button>
+    <button class="btn btn-secondary" onclick="limpar()">Limpar</button>
+  </div>
 </div>
 
 <script>
-// ------------------ Máscaras ------------------
+document.getElementById("Data").value = new Date().toLocaleDateString("pt-BR");
+let itens = [];
 
-// CNPJ
-function aplicarMascaraCNPJ(valor) {
-  return valor
-    .replace(/\D/g, "")
-    .replace(/^(\d{2})(\d)/, "$1.$2")
-    .replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3")
-    .replace(/\.(\d{3})(\d)/, ".$1/$2")
-    .replace(/(\d{4})(\d)/, "$1-$2")
-    .slice(0, 18);
+/* ---------- Máscaras e input filters ---------- */
+function onlyDigits(value) {
+  return value.replace(/\D/g, "");
 }
 
-// Telefone
-function aplicarMascaraTelefone(valor) {
-  return valor
-    .replace(/\D/g, "")
-    .replace(/^(\d{2})(\d)/, "($1) $2")
-    .replace(/(\d{5})(\d{4})$/, "$1-$2")
-    .slice(0, 15);
+function maskCNPJ(value) {
+  let v = onlyDigits(value).slice(0,14);
+  v = v.replace(/^(\d{2})(\d)/, "$1.$2");
+  v = v.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
+  v = v.replace(/\.(\d{3})(\d)/, ".$1/$2");
+  v = v.replace(/(\d{4})(\d)/, "$1-$2");
+  return v;
 }
 
-// Aplicar automaticamente
-document.addEventListener("input", function(e) {
-  if (e.target.id === "CNPJ") e.target.value = aplicarMascaraCNPJ(e.target.value);
-  if (e.target.id === "Telefone" || e.target.id === "Telefone Filial") e.target.value = aplicarMascaraTelefone(e.target.value);
-});
+function maskPhone(value) {
+  let v = onlyDigits(value).slice(0,11);
+  v = v.replace(/^(\d{2})(\d)/, "($1) $2");
+  v = v.replace(/(\d{5})(\d{4})$/, "$1-$2");
+  return v;
+}
 
-// ------------------ Máscara Valor (R$) ------------------
-document.addEventListener("input", function (e) {
-  if (e.target && e.target.classList.contains("valor-item")) {
-    let valor = e.target.value.replace(/\D/g, "");
-    if (valor === "") return e.target.value = "";
-    valor = (parseInt(valor, 10) / 100).toFixed(2) + "";
-    valor = valor.replace(".", ",");
-    valor = valor.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    e.target.value = valor;
+function maskPrice(value) {
+  // simples: aceita números e vírgula, mantém 2 casas
+  let v = value.replace(/[^\d,]/g, "");
+  // garantir vírgula como separador decimal
+  const parts = v.split(",");
+  if (parts.length > 1) {
+    parts[1] = parts[1].slice(0,2);
+    v = parts[0] + "," + parts[1];
   }
-});
+  return v;
+}
 
-// ------------------ Validação de Campos ------------------
-document.querySelectorAll("input[required]").forEach(input => {
-  input.addEventListener("blur", () => {
-    if (!input.value.trim()) input.classList.add("is-invalid");
-    else input.classList.remove("is-invalid");
+/* aplica máscaras enquanto digita */
+document.getElementById("CNPJ").addEventListener("input", e => e.target.value = maskCNPJ(e.target.value));
+document.getElementById("Telefone").addEventListener("input", e => e.target.value = maskPhone(e.target.value));
+document.getElementById("Telefone Filial").addEventListener("input", e => e.target.value = maskPhone(e.target.value));
+document.getElementById("preco").addEventListener("input", e => e.target.value = maskPrice(e.target.value));
+
+/* remover qualquer caractere não-numérico em campos que devem aceitar só números (quando colam texto) */
+["CNPJ","Telefone","Telefone Filial"].forEach(id => {
+  document.getElementById(id).addEventListener("paste", function(e){
+    e.preventDefault();
+    const text = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '');
+    const el = e.target;
+    if (id === "CNPJ") el.value = maskCNPJ(text);
+    else el.value = maskPhone(text);
   });
 });
 
-function validarEmail(email) {
-  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return regex.test(email);
-}
-
-const itens = [];
-
-function adicionarItem() {
-  const desc = document.getElementById("descricao");
-  const qtd = document.getElementById("quantidade");
-  const val = document.getElementById("valor");
-
-  if (!desc.value || !qtd.value || !val.value) return;
-
-  const valorNum = parseFloat(val.value.replace(/\./g, "").replace(",", "."));
-  const total = valorNum * parseInt(qtd.value);
-  itens.push({ descricao: desc.value, quantidade: qtd.value, valor: val.value, total: total.toFixed(2).replace(".", ",") });
-
-  const tbody = document.querySelector("#tabelaItens tbody");
-  const tr = document.createElement("tr");
-  tr.innerHTML = `<td>${desc.value}</td><td>${qtd.value}</td><td>${val.value}</td><td>${total.toLocaleString("pt-BR",{minimumFractionDigits:2})}</td>
-  <td><button type='button' class='btn btn-sm btn-danger' onclick='removerItem(this)'>X</button></td>`;
-  tbody.appendChild(tr);
-
-  desc.value = qtd.value = val.value = "";
-}
-
-function removerItem(btn) {
-  const row = btn.closest("tr");
-  const index = Array.from(row.parentNode.children).indexOf(row);
-  itens.splice(index, 1);
-  row.remove();
-}
-
-// ------------------ Geração PDF ------------------
-async function gerarPDF() {
-  const obrigatorios = Array.from(document.querySelectorAll("input[required]"));
-  const alertBox = document.getElementById("alertCampos");
-  alertBox.style.display = "none";
-
-  for (let input of obrigatorios) {
-    if (!input.value.trim()) {
-      input.classList.add("is-invalid");
-      alertBox.textContent = `⚠️ O campo "${input.placeholder}" é obrigatório.`;
-      alertBox.style.display = "block";
-      input.focus();
-      return;
-    } else {
-      input.classList.remove("is-invalid");
+/* ---------- blur validation visual ---------- */
+const allInputs = document.querySelectorAll("input, textarea");
+allInputs.forEach(el => {
+  el.addEventListener("blur", () => {
+    if (el.hasAttribute("required")) {
+      if (!el.value.trim()) {
+        el.classList.remove("valid");
+        el.classList.add("invalid");
+      } else {
+        el.classList.remove("invalid");
+        el.classList.add("valid");
+      }
     }
+    // email quick-check on blur
+    if (el.type === "email" && el.value.trim()) {
+      const ok = /[^@]+@[^@]+\.[^@]+/.test(el.value.trim());
+      if (!ok) {
+        el.classList.remove("valid");
+        el.classList.add("invalid");
+      }
+    }
+  });
+});
 
-    if (input.type === "email" && !validarEmail(input.value)) {
-      input.classList.add("is-invalid");
-      alertBox.textContent = `⚠️ O e-mail "${input.value}" não é válido.`;
-      alertBox.style.display = "block";
-      input.focus();
-      return;
+/* ---------- itens (mesmo comportamento anterior) ---------- */
+function addItem() {
+  const q = document.getElementById("qtd").value;
+  const c = document.getElementById("cod").value;
+  const d = document.getElementById("desc").value;
+  const p = document.getElementById("preco").value;
+  if (!q || !c || !d || !p) return showValidationAlert(["Preencha todos os campos do item!"]);
+  // normalizar preço: vírgula -> ponto
+  const precoNum = parseFloat(p.replace(",", "."));
+  const tot = (parseFloat(q) * precoNum).toFixed(2);
+  itens.push({ qtd: q, cod: c, desc: d, preco: p, tot: tot });
+  atualizarTabela();
+  ["qtd","cod","desc","preco"].forEach(id => document.getElementById(id).value="");
+}
+
+function atualizarTabela() {
+  const tbody = document.querySelector("#tabela_itens tbody");
+  tbody.innerHTML = "";
+  itens.forEach((it, i) => {
+    tbody.innerHTML += `<tr>
+      <td>${it.qtd}</td><td>${it.cod}</td><td>${it.desc}</td><td>${it.preco}</td>
+      <td><button class="btn btn-sm btn-danger" onclick="removerItem(${i})">X</button></td></tr>`;
+  });
+}
+
+function removerItem(i) {
+  itens.splice(i, 1);
+  atualizarTabela();
+}
+
+function limpar() {
+  document.querySelectorAll("input").forEach(i => { i.value = ""; i.classList.remove("invalid","valid"); });
+  document.getElementById("Data").value = new Date().toLocaleDateString("pt-BR");
+  itens = [];
+  atualizarTabela();
+  hideValidationAlert();
+}
+
+/* ---------- Alerta de validação personalizado ---------- */
+function showValidationAlert(messages) {
+  const box = document.getElementById("alert-validation");
+  box.innerHTML = "<strong>Campos obrigatórios faltando:</strong><ul>" + messages.map(m => `<li>${m}</li>`).join("") + "</ul>";
+  box.style.display = "block";
+  box.scrollIntoView({behavior:"smooth", block:"center"});
+}
+function hideValidationAlert() {
+  const box = document.getElementById("alert-validation");
+  box.style.display = "none";
+  box.innerHTML = "";
+}
+
+/* ---------- Geração do PDF (validação) ---------- */
+async function gerarPDF() {
+  hideValidationAlert();
+
+  const obrigatoriosCliente = [
+    "Empresa","CNPJ","Inscrição Estadual","Endereço","Cidade/Estado",
+    "Telefone","E-mail","Data","Nome do Responsável"
+  ];
+
+  const obrigatoriosFilial = [
+    "Nome Filial","Endereço Filial","Telefone Filial",
+    "E-mail Filial","Ramal","Cidade/Estado Filial"
+  ];
+
+  const faltando = [];
+
+  // validação front-end e marcação visual
+  for (let id of [...obrigatoriosCliente, ...obrigatoriosFilial, "prazo"]) {
+    const el = document.getElementById(id);
+    if (!el) continue;
+    if (!el.value.trim()) {
+      faltando.push(id);
+      el.classList.add("invalid");
+    } else {
+      // checks específicos
+      if (el.type === "email") {
+        const ok = /[^@]+@[^@]+\.[^@]+/.test(el.value.trim());
+        if (!ok) {
+          faltando.push(`${id} (e-mail inválido)`);
+          el.classList.add("invalid");
+        } else {
+          el.classList.add("valid");
+        }
+      } else {
+        el.classList.add("valid");
+      }
     }
   }
 
-  if (itens.length === 0) {
-    alertBox.textContent = "⚠️ Adicione pelo menos um item antes de gerar o PDF.";
-    alertBox.style.display = "block";
+  if (itens.length === 0) faltando.push("Itens (adicione ao menos 1 item)");
+
+  if (faltando.length) {
+    // foco no primeiro campo faltando que exista no DOM
+    for (let f of faltando) {
+      const key = f.split(" ")[0];
+      const el = document.getElementById(key);
+      if (el) { el.focus(); break; }
+    }
+    showValidationAlert(faltando);
     return;
   }
 
-  const cliente = {
-    Empresa: Empresa.value,
-    CNPJ: CNPJ.value,
-    "Inscrição Estadual": document.getElementById("Inscrição Estadual").value,
-    Endereço: Endereço.value,
-    "Cidade/Estado": document.getElementById("Cidade/Estado").value,
-    Telefone: Telefone.value,
-    "E-mail": document.getElementById("E-mail").value,
-    Data: Data.value,
-    "Nome do Responsável": document.getElementById("Nome do Responsável").value
-  };
+  // montagem dos objetos cliente/filial/itens
+  const cliente = {};
+  obrigatoriosCliente.forEach(id => cliente[id] = document.getElementById(id).value);
+  const filial = {};
+  obrigatoriosFilial.forEach(id => filial[id] = document.getElementById(id).value);
 
-  const filial = {
-    "Nome Filial": document.getElementById("Nome Filial").value,
-    "Endereço Filial": document.getElementById("Endereço Filial").value,
-    "Telefone Filial": document.getElementById("Telefone Filial").value,
-    "E-mail Filial": document.getElementById("E-mail Filial").value,
-    Ramal: document.getElementById("Ramal").value,
-    "Cidade/Estado Filial": document.getElementById("Cidade/Estado Filial").value
-  };
-
+  const pagamento = document.querySelector("input[name='pagamento']:checked").value;
   const payload = {
-    cliente,
-    filial,
-    itens,
-    obs: document.getElementById("obs").value
+    cliente, filial, itens,
+    obs: document.getElementById("obs").value,
+    pagamento, prazo: document.getElementById("prazo").value
   };
 
-  const resp = await fetch("/gerar_pdf", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
-  });
+  // chamada ao backend
+  try {
+    const resp = await fetch("/gerar_pdf", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
 
-  const blob = await resp.blob();
-  const url = window.URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "Ordem_Compra.pdf";
-  a.click();
+    if (!resp.ok) {
+      const txt = await resp.json().catch(() => null);
+      const msg = txt && txt.error ? txt.error : `Erro ${resp.status}`;
+      showValidationAlert([msg]);
+      return;
+    }
+
+    const blob = await resp.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    // nome do arquivo similar ao backend
+    const nome = `Ordem_Compra_${cliente["Empresa"].replace(/\s+/g,"_")}.pdf`;
+    a.download = nome;
+    a.click();
+  } catch (err) {
+    showValidationAlert(["Erro ao gerar PDF. Verifique o servidor."]);
+    console.error(err);
+  }
 }
 </script>
 </body>
