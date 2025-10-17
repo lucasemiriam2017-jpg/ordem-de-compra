@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, send_file, jsonify
 from reportlab.lib.pagesizes import A4
+from reportlab.lib import colors
 from reportlab.lib.units import cm
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
@@ -9,6 +10,7 @@ import io, os, re
 app = Flask(__name__)
 
 LOGO_PATH = os.path.join("static", "logo.png")
+PDF_PREFIX = "Ordem_Compra"
 
 def only_digits(s):
     return re.sub(r"\D", "", s or "")
@@ -32,76 +34,99 @@ def gerar_pdf():
     pagamento = data.get("pagamento", "")
     prazo = data.get("prazo", "")
 
+    # Criar PDF
     buffer = io.BytesIO()
-    doc = SimpleDocTemplate(buffer, pagesize=A4,
-                            leftMargin=1.5 * cm, rightMargin=1.5 * cm,
-                            topMargin=2 * cm, bottomMargin=2 * cm)
+    doc = SimpleDocTemplate(
+        buffer, pagesize=A4,
+        leftMargin=1.5 * cm, rightMargin=1.5 * cm,
+        topMargin=2 * cm, bottomMargin=2 * cm
+    )
 
-    styles = getSampleStyleSheet()
-    title = ParagraphStyle(name='Title', fontSize=16, alignment=TA_CENTER, spaceAfter=12)
-    normal = ParagraphStyle(name='Normal', fontSize=10, alignment=TA_LEFT, spaceAfter=6)
+    s = getSampleStyleSheet()
+    st = {
+        "title": ParagraphStyle("title", parent=s["Heading1"], alignment=TA_CENTER, fontSize=16),
+        "n": ParagraphStyle("n", parent=s["Normal"], fontSize=9),
+        "small": ParagraphStyle("small", parent=s["Normal"], fontSize=8),
+        "tabela": ParagraphStyle("tabela", parent=s["Normal"], fontSize=8.5, alignment=TA_LEFT),
+        "center": ParagraphStyle("center", parent=s["Normal"], fontSize=10, alignment=TA_CENTER, spaceAfter=6)
+    }
 
-    elements = []
-
-    # Logo
+    e = []
     if os.path.exists(LOGO_PATH):
-        elements.append(Image(LOGO_PATH, width=80, height=40))
-        elements.append(Spacer(1, 6))
+        logo = Image(LOGO_PATH, width=8 * cm, height=2.5 * cm)
+        logo.hAlign = "CENTER"
+        e += [logo, Spacer(1, 6)]
 
-    # Título
-    elements.append(Paragraph("Ordem de Compra", title))
-    elements.append(Spacer(1, 12))
+    e += [Paragraph("<b>ORDEM DE COMPRA</b>", st["title"]), Spacer(1, 10)]
 
-    # Empresa Solicitante
-    elements.append(Paragraph("<b>Empresa Solicitante</b>", styles["Heading4"]))
-    data_cliente = [[k, v] for k, v in cliente.items() if v.strip()]
-    table_cliente = Table(data_cliente, colWidths=[5 * cm, 10 * cm])
-    table_cliente.setStyle(TableStyle([
-        ('BOX', (0, 0), (-1, -1), 0.5, 'black'),
-        ('INNERGRID', (0, 0), (-1, -1), 0.25, 'black'),
-        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+    # Empresa solicitante
+    e.append(Paragraph("<b>EMPRESA SOLICITANTE</b>", st["n"]))
+    cliente_data = [[Paragraph(f"<b>{k}</b>", st["n"]), Paragraph(str(v), st["n"])] for k, v in cliente.items()]
+    tabela_cliente = Table(cliente_data, colWidths=[4 * cm, 11 * cm])
+    tabela_cliente.setStyle(TableStyle([("GRID", (0, 0), (-1, -1), 0.4, colors.grey)]))
+    e += [tabela_cliente, Spacer(1, 8)]
+
+    # Filial
+    e.append(Paragraph("<b>FILIAL / FORNECEDOR</b>", st["n"]))
+    filial_data = [[Paragraph(f"<b>{k}</b>", st["n"]), Paragraph(str(v), st["n"])] for k, v in filial.items()]
+    tabela_filial = Table(filial_data, colWidths=[4 * cm, 11 * cm])
+    tabela_filial.setStyle(TableStyle([("GRID", (0, 0), (-1, -1), 0.4, colors.grey)]))
+    e += [tabela_filial, Spacer(1, 8)]
+
+    e.append(Paragraph(f"<b>Prazo de Entrega:</b> {prazo}", st["n"]))
+    e.append(Spacer(1, 14))
+
+    # Lista de produtos
+    e.append(Paragraph("<b>INCLUSÃO DE PRODUTOS</b>", st["center"]))
+    e.append(Spacer(1, 6))
+
+    cols = [1.2*cm, 1.0*cm, 3.2*cm, 8.3*cm, 3.1*cm, 2.3*cm]
+    data_table = [["ITEM", "QTD", "CÓDIGO", "DESCRIÇÃO", "PREÇO UNIT (R$)", "TOTAL (R$)"]]
+    total = 0
+
+    for i, item in enumerate(itens, start=1):
+        q = item["qtd"]
+        cod = item["cod"]
+        desc = item["desc"]
+        preco = float(item["preco"].replace(",", ".")) if item["preco"] else 0
+        tot = float(item["tot"].replace(",", ".")) if item["tot"] else 0
+        total += tot
+        p_fmt = f"{preco:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+        t_fmt = f"{tot:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+        data_table.append([str(i), q, cod, Paragraph(desc, st["tabela"]), p_fmt, t_fmt])
+
+    total_fmt = f"{total:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+    data_table.append(["", "", "", Paragraph("<b>TOTAL GERAL</b>", st["tabela"]), "", f"R$ {total_fmt}"])
+
+    t = Table(data_table, colWidths=cols, repeatRows=1)
+    t.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#004C99")),
+        ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
+        ("GRID", (0, 0), (-1, -1), 0.6, colors.grey),
+        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+        ("ALIGN", (3, 1), (3, -1), "LEFT"),
+        ("ALIGN", (4, 1), (5, -1), "RIGHT"),
     ]))
-    elements.append(table_cliente)
-    elements.append(Spacer(1, 12))
+    e += [t, Spacer(1, 10)]
 
-    # Filial / Fornecedor
-    elements.append(Paragraph("<b>Filial / Fornecedor</b>", styles["Heading4"]))
-    data_filial = [[k, v] for k, v in filial.items() if v.strip()]
-    table_filial = Table(data_filial, colWidths=[5 * cm, 10 * cm])
-    table_filial.setStyle(TableStyle([
-        ('BOX', (0, 0), (-1, -1), 0.5, 'black'),
-        ('INNERGRID', (0, 0), (-1, -1), 0.25, 'black'),
-        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-    ]))
-    elements.append(table_filial)
-    elements.append(Spacer(1, 12))
+    # Pagamento e observações
+    e.append(Paragraph(f"<b>Condição de Pagamento:</b> Boleto em {pagamento}", st["n"]))
+    e.append(Spacer(1, 10))
 
-    # Condições de pagamento
-    elements.append(Paragraph("<b>Condições de Pagamento:</b> " + pagamento, normal))
-    elements.append(Paragraph("<b>Prazo de Entrega:</b> " + prazo, normal))
-    elements.append(Spacer(1, 12))
-
-    # Observações
     if obs:
-        elements.append(Paragraph("<b>Observações:</b>", styles["Heading4"]))
-        elements.append(Paragraph(obs, normal))
-        elements.append(Spacer(1, 12))
+        e.append(Paragraph("<b>OBSERVAÇÕES:</b>", st["n"]))
+        e.append(Paragraph(obs, st["n"]))
+        e.append(Spacer(1, 12))
 
-    # Itens
-    elements.append(Paragraph("<b>Inclusão de Produtos</b>", styles["Heading4"]))
-    data_itens = [["Produto", "Quantidade", "Valor (R$)"]] + [[i["produto"], i["quantidade"], i["valor"]] for i in itens]
-    table_itens = Table(data_itens, colWidths=[8 * cm, 3 * cm, 4 * cm])
-    table_itens.setStyle(TableStyle([
-        ('BOX', (0, 0), (-1, -1), 0.5, 'black'),
-        ('GRID', (0, 0), (-1, -1), 0.25, 'black'),
-        ('BACKGROUND', (0, 0), (-1, 0), '#f0f0f0'),
-        ('ALIGN', (1, 1), (-1, -1), 'CENTER')
-    ]))
-    elements.append(table_itens)
+    e.append(Paragraph("A ORDEM DE COMPRA DEVE SER ENVIADA PARA <b>convenios@farmaciassaojoao.com.br</b>", st["small"]))
+    e.append(Paragraph("<i>*A via original deve ser entregue na filial da venda*</i>", st["small"]))
+    e.append(Spacer(1, 36))
+    e.append(Paragraph("Assinatura e carimbo: _________________________________", st["n"]))
 
-    doc.build(elements)
+    doc.build(e)
     buffer.seek(0)
-    return send_file(buffer, as_attachment=True, download_name="Ordem_Compra.pdf", mimetype="application/pdf")
+    nome_arquivo = f"{PDF_PREFIX}_{cliente.get('Empresa', 'Documento').replace(' ', '_')}.pdf"
+    return send_file(buffer, as_attachment=True, download_name=nome_arquivo, mimetype="application/pdf")
 
 if __name__ == "__main__":
     app.run(debug=True)
