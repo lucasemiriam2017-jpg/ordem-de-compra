@@ -9,50 +9,50 @@ body { background-color: #f8f9fa; padding: 20px; }
 .container { max-width: 950px; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,.1); }
 h5 { margin-top: 30px; }
 .logo { display: block; margin: 0 auto 15px; max-width: 200px; }
-#area-itens { margin-top: 25px; } /* separação maior entre campos e tabela */
+#area-itens { margin-top: 25px; }
 </style>
 </head>
 <body>
 <div class="container">
-  <img src="/static/logo.png" alt="Logo" class="logo">  <!-- ✅ Logo adicionada na tela -->
+  <img src="/static/logo.png" alt="Logo" class="logo">
   <h3 class="text-center mb-4">Ordem de Compra — Emissão (PDF)</h3>
 
   <h5>Empresa Solicitante</h5>
   <div class="row">
-    <div class="col-md-6"><input class="form-control mb-2" id="Empresa" placeholder="Empresa"></div>
-    <div class="col-md-6"><input class="form-control mb-2" id="CNPJ" placeholder="CNPJ"></div>
-    <div class="col-md-6"><input class="form-control mb-2" id="Inscrição Estadual" placeholder="Inscrição Estadual"></div>
-    <div class="col-md-6"><input class="form-control mb-2" id="Endereço" placeholder="Endereço"></div>
-    <div class="col-md-6"><input class="form-control mb-2" id="Cidade/Estado" placeholder="Cidade/Estado"></div>
-    <div class="col-md-6"><input class="form-control mb-2" id="Telefone" placeholder="Telefone"></div>
-    <div class="col-md-6"><input class="form-control mb-2" id="E-mail" placeholder="E-mail"></div>
-    <div class="col-md-6"><input class="form-control mb-2" id="Data" placeholder="Data" value=""></div>
+    <div class="col-md-6"><input class="form-control mb-2" id="Empresa" placeholder="Empresa" required></div>
+    <div class="col-md-6"><input class="form-control mb-2" id="CNPJ" placeholder="CNPJ" required></div>
+    <div class="col-md-6"><input class="form-control mb-2" id="Inscrição Estadual" placeholder="Inscrição Estadual" required></div>
+    <div class="col-md-6"><input class="form-control mb-2" id="Endereço" placeholder="Endereço" required></div>
+    <div class="col-md-6"><input class="form-control mb-2" id="Cidade/Estado" placeholder="Cidade/Estado" required></div>
+    <div class="col-md-6"><input class="form-control mb-2" id="Telefone" placeholder="Telefone" required></div>
+    <div class="col-md-6"><input class="form-control mb-2" id="E-mail" placeholder="E-mail" type="email" required></div>
+    <div class="col-md-6"><input class="form-control mb-2" id="Data" placeholder="Data" required></div>
+    <div class="col-md-6"><input class="form-control mb-2" id="Nome do Responsável" placeholder="Nome do Responsável" required></div>
   </div>
 
   <h5>Filial / Fornecedor</h5>
   <div class="row">
-    <div class="col-md-6"><input class="form-control mb-2" id="Nome Filial" placeholder="Nome Filial"></div>
-    <div class="col-md-6"><input class="form-control mb-2" id="Ramal/Telefone" placeholder="Ramal/Telefone"></div>
-    <div class="col-md-6"><input class="form-control mb-2" id="E-mail Filial" placeholder="E-mail Filial"></div>
-    <div class="col-md-6"><input class="form-control mb-2" id="Endereço Filial" placeholder="Endereço Filial"></div>
-    <div class="col-md-6"><input class="form-control mb-2" id="Cidade Filial" placeholder="Cidade Filial"></div>
+    <div class="col-md-6"><input class="form-control mb-2" id="Nome Filial" placeholder="Nome Filial" required></div>
+    <div class="col-md-6"><input class="form-control mb-2" id="Ramal/Telefone" placeholder="Ramal/Telefone" required></div>
+    <div class="col-md-6"><input class="form-control mb-2" id="E-mail Filial" placeholder="E-mail Filial" required></div>
+    <div class="col-md-6"><input class="form-control mb-2" id="Endereço Filial" placeholder="Endereço Filial" required></div>
+    <div class="col-md-6"><input class="form-control mb-2" id="Cidade Filial" placeholder="Cidade Filial" required></div>
   </div>
 
   <div class="mb-3">
     <label>Prazo de Entrega</label>
-    <input class="form-control" id="prazo" placeholder="Prazo de entrega" value="IMEDIATO">
+    <input class="form-control" id="prazo" placeholder="Prazo de entrega" value="IMEDIATO" required>
   </div>
 
   <hr>
 
-  <!-- ✅ Novo título + espaçamento e ordem -->
   <h5>Lançamento de Produtos</h5>
   <div id="area-itens">
     <div class="row mb-3">
-      <div class="col"><input class="form-control" id="qtd" placeholder="Qtd"></div>
-      <div class="col"><input class="form-control" id="cod" placeholder="Código"></div>
-      <div class="col"><input class="form-control" id="desc" placeholder="Descrição"></div>
-      <div class="col"><input class="form-control" id="preco" placeholder="Preço Unitário"></div>
+      <div class="col"><input class="form-control" id="qtd" placeholder="Qtd" required></div>
+      <div class="col"><input class="form-control" id="cod" placeholder="Código" required></div>
+      <div class="col"><input class="form-control" id="desc" placeholder="Descrição" required></div>
+      <div class="col"><input class="form-control" id="preco" placeholder="Preço Unitário" required></div>
       <div class="col"><button class="btn btn-success" onclick="addItem()">Adicionar</button></div>
     </div>
 
@@ -87,9 +87,16 @@ h5 { margin-top: 30px; }
   </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
 <script>
 document.getElementById("Data").value = new Date().toLocaleDateString("pt-BR");
 let itens = [];
+
+$("#CNPJ").mask("00.000.000/0000-00");
+$("#Telefone").mask("(00) 00000-0000");
+$("#Ramal\\/Telefone").mask("(00) 00000-0000");
+$("#preco").mask("0000000000,00", {reverse: true});
 
 function addItem() {
   const q = document.getElementById("qtd").value;
@@ -97,7 +104,7 @@ function addItem() {
   const d = document.getElementById("desc").value;
   const p = document.getElementById("preco").value;
   if (!q || !c || !d || !p) return alert("Preencha todos os campos do item!");
-  const tot = (parseFloat(q) * parseFloat(p)).toFixed(2);
+  const tot = (parseFloat(q) * parseFloat(p.replace(",", "."))).toFixed(2);
   itens.push({ qtd: q, cod: c, desc: d, preco: p, tot: tot });
   atualizarTabela();
   ["qtd","cod","desc","preco"].forEach(id => document.getElementById(id).value="");
@@ -126,16 +133,28 @@ function limpar() {
 }
 
 async function gerarPDF() {
-  if (!document.getElementById("Empresa").value) return alert("Informe a empresa.");
-  if (itens.length === 0) return alert("Adicione ao menos um item.");
+  const obrigatoriosCliente = ["Empresa","CNPJ","Inscrição Estadual","Endereço","Cidade/Estado","Telefone","E-mail","Data","Nome do Responsável"];
+  const obrigatoriosFilial = ["Nome Filial","Ramal/Telefone","E-mail Filial","Endereço Filial","Cidade Filial"];
+
+  for (let id of [...obrigatoriosCliente, ...obrigatoriosFilial]) {
+    const el = document.getElementById(id);
+    if (!el.value.trim()) {
+      alert(`Preencha o campo obrigatório: ${id}`);
+      el.focus();
+      return;
+    }
+  }
+
+  if (itens.length === 0) {
+    alert("Adicione ao menos um item antes de gerar o PDF.");
+    return;
+  }
 
   const cliente = {};
-  ["Empresa","CNPJ","Inscrição Estadual","Endereço","Cidade/Estado","Telefone","E-mail","Data"]
-    .forEach(id => cliente[id] = document.getElementById(id).value);
+  obrigatoriosCliente.forEach(id => cliente[id] = document.getElementById(id).value);
 
   const filial = {};
-  ["Nome Filial","Ramal/Telefone","E-mail Filial","Endereço Filial","Cidade Filial"]
-    .forEach(id => filial[id] = document.getElementById(id).value);
+  obrigatoriosFilial.forEach(id => filial[id] = document.getElementById(id).value);
 
   const pagamento = document.querySelector("input[name='pagamento']:checked").value;
   const payload = {
