@@ -68,7 +68,7 @@ input.is-invalid + .invalid-feedback {
 
   <hr>
 
-  <!-- Inclusão de Produtos -->
+  <!-- Inclusão de Produtos (Nova versão dinâmica) -->
   <h5>Inclusão de Produtos</h5>
   <div id="area-itens" class="mb-4">
     <table class="table table-bordered align-middle" id="tabela_itens">
@@ -112,11 +112,14 @@ input.is-invalid + .invalid-feedback {
 </div>
 
 <script>
+/* Script compatível com Firefox/Chrome/Edge.
+   Substitui todo o script anterior — mantém IDs e layout intactos. */
 document.addEventListener("DOMContentLoaded", function () {
-  const cnpj = document.getElementById("CNPJ");
-  const telefone = document.getElementById("Telefone");
-  const telefoneFilial = document.getElementById("Telefone Filial");
-  const data = document.getElementById("Data");
+  // máscaras iniciais
+  var cnpj = document.getElementById("CNPJ");
+  var telefone = document.getElementById("Telefone");
+  var telefoneFilial = document.getElementById("Telefone Filial");
+  var data = document.getElementById("Data");
 
   function maskCNPJ(v) {
     return v.replace(/\D/g,"")
@@ -126,7 +129,6 @@ document.addEventListener("DOMContentLoaded", function () {
             .replace(/(\d{4})(\d)/,"$1-$2")
             .slice(0,18);
   }
-
   function maskTel(v) {
     return v.replace(/\D/g,"")
             .replace(/^(\d{2})(\d)/g,"($1) $2")
@@ -134,118 +136,161 @@ document.addEventListener("DOMContentLoaded", function () {
             .slice(0,15);
   }
 
-  if (cnpj) cnpj.addEventListener("input", e => e.target.value = maskCNPJ(e.target.value));
-  if (telefone) telefone.addEventListener("input", e => e.target.value = maskTel(e.target.value));
-  if (telefoneFilial) telefoneFilial.addEventListener("input", e => e.target.value = maskTel(e.target.value));
+  if (cnpj) cnpj.addEventListener("input", function(e){ e.target.value = maskCNPJ(e.target.value); });
+  if (telefone) telefone.addEventListener("input", function(e){ e.target.value = maskTel(e.target.value); });
+  if (telefoneFilial) telefoneFilial.addEventListener("input", function(e){ e.target.value = maskTel(e.target.value); });
   if (data) data.value = new Date().toLocaleDateString("pt-BR");
 
-  const tabelaBody = document.querySelector("#tabela_itens tbody");
-  let contador = 1;
-  let itens = [];
+  // referências da tabela
+  var tabelaBody = document.querySelector("#tabela_itens tbody");
+  var contador = 1;
+  var itens = [];
 
   function formatarValor(valor) {
     valor = String(valor).replace(/\D/g,"");
     if (!valor) return "";
-    const num = (parseFloat(valor)/100).toFixed(2);
+    var num = (parseFloat(valor)/100).toFixed(2);
     return num.replace(".",",").replace(/\B(?=(\d{3})+(?!\d))/g,".");
   }
 
-  function criarInput(classe, tipo="text", placeholder="") {
-    const input = document.createElement("input");
-    input.type = tipo;
+  function criarInput(classe, tipo, placeholder) {
+    var input = document.createElement("input");
+    input.type = tipo || "text";
     input.className = "form-control " + classe;
     if (placeholder) input.placeholder = placeholder;
     return input;
   }
 
+  // cria linha usando createElement (compatível Firefox)
   function adicionarLinha() {
-    const linha = document.createElement("tr");
+    var tr = document.createElement("tr");
 
-    const tdItem = document.createElement("td");
+    var tdItem = document.createElement("td");
     tdItem.className = "text-center";
     tdItem.textContent = contador;
 
-    const tdQtd = document.createElement("td");
-    const inpQtd = criarInput("qtd", "number", "Qtd");
+    var tdQtd = document.createElement("td");
+    var inpQtd = criarInput("qtd", "number", "Qtd");
     inpQtd.min = "0";
     tdQtd.appendChild(inpQtd);
 
-    const tdCod = document.createElement("td");
-    tdCod.appendChild(criarInput("cod"));
+    var tdCod = document.createElement("td");
+    tdCod.appendChild(criarInput("cod", "text", ""));
 
-    const tdDesc = document.createElement("td");
-    tdDesc.appendChild(criarInput("desc"));
+    var tdDesc = document.createElement("td");
+    tdDesc.appendChild(criarInput("desc", "text", ""));
 
-    const tdPreco = document.createElement("td");
-    const inpPreco = criarInput("preco", "text", "0,00");
+    var tdPreco = document.createElement("td");
+    var inpPreco = criarInput("preco", "text", "0,00");
     tdPreco.appendChild(inpPreco);
 
-    const tdTotal = document.createElement("td");
+    var tdTotal = document.createElement("td");
     tdTotal.className = "text-end total";
     tdTotal.textContent = "0,00";
 
-    const tdAcoes = document.createElement("td");
+    var tdAcoes = document.createElement("td");
     tdAcoes.className = "text-center";
-    const btnRem = document.createElement("button");
+    var btnRem = document.createElement("button");
+    btnRem.type = "button";
     btnRem.className = "btn btn-sm btn-danger btn-remover";
     btnRem.textContent = "X";
     tdAcoes.appendChild(btnRem);
 
-    linha.append(tdItem, tdQtd, tdCod, tdDesc, tdPreco, tdTotal, tdAcoes);
-    tabelaBody.appendChild(linha);
+    tr.appendChild(tdItem);
+    tr.appendChild(tdQtd);
+    tr.appendChild(tdCod);
+    tr.appendChild(tdDesc);
+    tr.appendChild(tdPreco);
+    tr.appendChild(tdTotal);
+    tr.appendChild(tdAcoes);
+
+    tabelaBody.appendChild(tr);
     contador++;
   }
 
+  // recalcula totais lendo todas as linhas
   function calcularTotais() {
     itens = [];
-    tabelaBody.querySelectorAll("tr").forEach(linha => {
-      const qtd = parseFloat(linha.querySelector(".qtd")?.value || 0);
-      const cod = linha.querySelector(".cod")?.value || "";
-      const desc = linha.querySelector(".desc")?.value || "";
-      const precoStr = linha.querySelector(".preco")?.value || "0";
-      const preco = parseFloat(precoStr.replace(/\./g,"").replace(",", ".")) || 0;
-      const total = qtd * preco;
-      linha.querySelector(".total").textContent = total.toLocaleString("pt-BR", { minimumFractionDigits: 2 });
+    var rows = tabelaBody.querySelectorAll("tr");
+    rows.forEach(function (linha) {
+      var qtdInp = linha.querySelector(".qtd");
+      var codInp = linha.querySelector(".cod");
+      var descInp = linha.querySelector(".desc");
+      var precoInp = linha.querySelector(".preco");
+      var totalCell = linha.querySelector(".total");
+
+      var qtd = 0;
+      if (qtdInp && qtdInp.value !== "") {
+        qtd = parseFloat(String(qtdInp.value).replace(",", "."));
+        if (isNaN(qtd)) qtd = 0;
+      }
+      var preco = 0;
+      if (precoInp && precoInp.value !== "") {
+        var p = String(precoInp.value).replace(/\./g, "").replace(",", ".");
+        preco = parseFloat(p);
+        if (isNaN(preco)) preco = 0;
+      }
+      var total = qtd * preco;
+      var totalFmt = (total).toLocaleString("pt-BR", { minimumFractionDigits: 2 });
+      if (totalCell) totalCell.textContent = totalFmt;
+
       itens.push({
         qtd: qtd.toString(),
-        cod,
-        desc,
-        preco: preco.toLocaleString("pt-BR", { minimumFractionDigits: 2 }),
-        tot: total.toLocaleString("pt-BR", { minimumFractionDigits: 2 })
+        cod: codInp ? codInp.value : "",
+        desc: descInp ? descInp.value : "",
+        preco: (preco).toLocaleString("pt-BR", { minimumFractionDigits: 2 }),
+        tot: totalFmt
       });
     });
   }
 
-  // Delegação de eventos
-  tabelaBody.addEventListener("input", e => {
-    const target = e.target;
-    if (target.classList.contains("preco")) {
-      target.value = formatarValor(target.value);
+  // delegation para inputs dentro da tabela (funciona no Firefox)
+  tabelaBody.addEventListener("input", function (evt) {
+    var t = evt.target;
+    if (!t) return;
+    if (t.classList && t.classList.contains("preco")) {
+      var cur = t.value;
+      t.value = formatarValor(cur);
       calcularTotais();
+      return;
     }
-    if (target.classList.contains("qtd")) calcularTotais();
+    if (t.classList && t.classList.contains("qtd")) {
+      calcularTotais();
+      return;
+    }
   });
 
-  tabelaBody.addEventListener("click", e => {
-    if (e.target.classList.contains("btn-remover")) {
-      e.target.closest("tr").remove();
-      calcularTotais();
+  // delegation para remoção de linhas
+  tabelaBody.addEventListener("click", function (evt) {
+    var t = evt.target;
+    if (!t) return;
+    if (t.classList && t.classList.contains("btn-remover")) {
+      var tr = t.closest("tr");
+      if (tr) {
+        tr.parentNode.removeChild(tr);
+        calcularTotais();
+      }
     }
   });
 
+  // expor função global usada pelo botão inline
   window.adicionarLinha = adicionarLinha;
 
-  document.querySelectorAll("input[required]").forEach(input => {
-    input.addEventListener("blur", () => { if (!input.value.trim()) input.classList.add("is-invalid"); });
-    input.addEventListener("input", () => { if (input.value.trim()) input.classList.remove("is-invalid"); });
+  // validador suave dos required
+  var requiredInputs = document.querySelectorAll("input[required]");
+  requiredInputs.forEach(function (input) {
+    input.addEventListener("blur", function () { if (!input.value.trim()) input.classList.add("is-invalid"); });
+    input.addEventListener("input", function () { if (input.value.trim()) input.classList.remove("is-invalid"); });
   });
 
+  // gerar PDF (compatível Firefox)
   window.gerarPDF = async function () {
-    const obrigatorios = ["Empresa","CNPJ","Inscrição Estadual","Endereço","Cidade/Estado","Telefone","E-mail","Nome do Responsável","Data","Nome Filial","Endereço Filial","Telefone Filial","E-mail Filial","Ramal","Cidade/Estado Filial","prazo"];
-    let primeiroErro = null;
-    for (const id of obrigatorios) {
-      const el = document.getElementById(id);
-      if (!el.value.trim()) {
+    var obrigatorios = ["Empresa","CNPJ","Inscrição Estadual","Endereço","Cidade/Estado","Telefone","E-mail","Nome do Responsável","Data","Nome Filial","Endereço Filial","Telefone Filial","E-mail Filial","Ramal","Cidade/Estado Filial","prazo"];
+    var primeiroErro = null;
+    for (var i = 0; i < obrigatorios.length; i++) {
+      var id = obrigatorios[i];
+      var el = document.getElementById(id);
+      if (el && !String(el.value || "").trim()) {
         el.classList.add("is-invalid");
         if (!primeiroErro) primeiroErro = el;
       }
@@ -255,32 +300,46 @@ document.addEventListener("DOMContentLoaded", function () {
       primeiroErro.focus();
       return;
     }
+
     calcularTotais();
     if (itens.length === 0) { alert("⚠️ Adicione ao menos um item antes de gerar o PDF."); return; }
 
-    const cliente={}, filial={};
-    ["Empresa","CNPJ","Inscrição Estadual","Endereço","Cidade/Estado","Telefone","E-mail","Nome do Responsável","Data"].forEach(id => cliente[id]=document.getElementById(id).value);
-    ["Nome Filial","Endereço Filial","Telefone Filial","E-mail Filial","Ramal","Cidade/Estado Filial"].forEach(id => filial[id]=document.getElementById(id).value);
+    var cliente = {};
+    var filial = {};
+    var camposCliente = ["Empresa","CNPJ","Inscrição Estadual","Endereço","Cidade/Estado","Telefone","E-mail","Nome do Responsável","Data"];
+    camposCliente.forEach(function (id) { var el = document.getElementById(id); cliente[id] = el ? el.value : ""; });
+    var camposFilial = ["Nome Filial","Endereço Filial","Telefone Filial","E-mail Filial","Ramal","Cidade/Estado Filial"];
+    camposFilial.forEach(function (id) { var el = document.getElementById(id); filial[id] = el ? el.value : ""; });
 
-    const pagamento=document.querySelector("input[name='pagamento']:checked").value;
-    const payload={cliente,filial,itens,obs:document.getElementById("obs").value,pagamento,prazo:document.getElementById("prazo").value};
+    var pagamento = (document.querySelector("input[name='pagamento']:checked") || {}).value || "";
+    var payload = { cliente: cliente, filial: filial, itens: itens, obs: (document.getElementById("obs")?document.getElementById("obs").value:""), pagamento: pagamento, prazo: (document.getElementById("prazo")?document.getElementById("prazo").value:"") };
 
-    const resp=await fetch("/gerar_pdf",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
-    const blob=await resp.blob();
-    const url=window.URL.createObjectURL(blob);
-    const a=document.createElement("a");
-    a.href=url; a.download="Ordem_Compra.pdf";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
+    try {
+      var resp = await fetch("/gerar_pdf", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+      if (!resp.ok) throw new Error("Erro ao gerar PDF: " + resp.statusText);
+      var blob = await resp.blob();
+      var url = window.URL.createObjectURL(blob);
+      var a = document.createElement("a");
+      a.href = url;
+      a.download = "Ordem_Compra.pdf";
+      document.body.appendChild(a); // necessário para Firefox
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error(err);
+      alert("Erro ao gerar PDF. Veja console para detalhes.");
+    }
   };
 
+  // limpar formulário (exposto globalmente)
   window.limpar = function () {
-    document.querySelectorAll("input").forEach(i => { i.value=""; i.classList.remove("is-invalid"); });
-    document.getElementById("Data").value = new Date().toLocaleDateString("pt-BR");
-    tabelaBody.innerHTML="";
-    itens=[];
-    contador=1;
+    var inputs = document.querySelectorAll("input");
+    inputs.forEach(function (i) { i.value = ""; i.classList.remove("is-invalid"); });
+    if (document.getElementById("Data")) document.getElementById("Data").value = new Date().toLocaleDateString("pt-BR");
+    tabelaBody.innerHTML = "";
+    itens = [];
+    contador = 1;
   };
 });
 </script>
