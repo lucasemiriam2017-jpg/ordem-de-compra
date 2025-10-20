@@ -1,243 +1,194 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ordem de Compra</title>
-  <link
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-    rel="stylesheet"
-  />
-  <style>
-    body {
-      background-color: #f2f4f8;
-      font-family: "Segoe UI", sans-serif;
-    }
-    .container {
-      max-width: 1100px;
-      background: #fff;
-      padding: 20px 30px;
-      border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      margin-top: 30px;
-      margin-bottom: 40px;
-    }
-    .titulo-secao {
-      background: #0d6efd;
-      color: #fff;
-      padding: 6px 12px;
-      border-radius: 6px;
-      font-weight: 600;
-      margin-bottom: 15px;
-    }
-    label {
-      font-weight: 500;
-    }
-    .form-control:focus {
-      box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
-    }
-    .table thead {
-      background-color: #fff !important;
-    }
-    .table thead th {
-      text-align: center;
-      vertical-align: middle;
-    }
-    .table td input {
-      text-align: center;
-    }
-    .mensagem-info {
-      background: #eef5ff;
-      border-left: 4px solid #0d6efd;
-      padding: 10px 15px;
-      border-radius: 8px;
-      margin-top: 20px;
-    }
-    .btn-adicionar {
-      background: #198754;
-      color: #fff;
-    }
-    .btn-adicionar:hover {
-      background: #157347;
-    }
-    .btn-pdf {
-      background: #0d6efd;
-      color: #fff;
-      font-weight: 500;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Ordem de Compra (Web)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+<style>
+body { background-color: #f8f9fa; padding: 20px; }
+.container { max-width: 950px; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,.1); }
+h5 { margin-top: 30px; }
+.logo { display: block; margin: 0 auto 15px; max-width: 200px; }
+#area-itens { margin-top: 25px; }
+input.is-invalid { border-color: #dc3545 !important; }
+.invalid-feedback {
+  display: none;
+  color: #dc3545;
+  font-size: 0.9em;
+  margin-top: 2px;
+}
+input.is-invalid + .invalid-feedback {
+  display: block;
+}
+.info-box {
+  background: #f1f5ff;
+  border-left: 4px solid #0d6efd;
+  padding: 10px 15px;
+  border-radius: 6px;
+  font-size: 0.95em;
+  margin-bottom: 20px;
+}
+</style>
 </head>
 <body>
-  <div class="container">
-    <h2 class="text-center mb-4 fw-bold text-primary">ORDEM DE COMPRA</h2>
+<div class="container">
+  <img src="/static/logo.png" alt="Logo" class="logo">
+  <h3 class="text-center mb-4">Ordem de Compra — Emissão (PDF)</h3>
 
-    <div class="titulo-secao">Empresa Solicitante</div>
-    <div class="row g-3 mb-3">
-      <div class="col-md-4">
-        <label>Empresa</label>
-        <input type="text" class="form-control obrigatorio" id="empresa" />
-      </div>
-      <div class="col-md-4">
-        <label>CNPJ</label>
-        <input type="text" class="form-control obrigatorio" id="cnpj" />
-      </div>
-      <div class="col-md-4">
-        <label>IE</label>
-        <input type="text" class="form-control" id="ie" />
-      </div>
-    </div>
+  <!-- Empresa solicitante -->
+  <h5>Empresa Solicitante</h5>
+  <div class="row">
+    <div class="col-md-6"><input class="form-control mb-1" id="Empresa" placeholder="Empresa" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
+    <div class="col-md-6"><input class="form-control mb-1" id="CNPJ" placeholder="CNPJ" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
+    <div class="col-md-6"><input class="form-control mb-1" id="Inscrição Estadual" placeholder="Inscrição Estadual" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
+    <div class="col-md-6"><input class="form-control mb-1" id="Endereço" placeholder="Endereço" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
+    <div class="col-md-6"><input class="form-control mb-1" id="Cidade/Estado" placeholder="Cidade/Estado" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
+    <div class="col-md-6"><input class="form-control mb-1" id="Telefone" placeholder="Telefone" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
+    <div class="col-md-6"><input type="email" class="form-control mb-1" id="E-mail" placeholder="E-mail (para recebimento de boleto)" required><div class="invalid-feedback">⚠️ Digite um e-mail válido.</div></div>
+    <div class="col-md-6"><input class="form-control mb-1" id="Nome do Responsável" placeholder="Nome do Responsável" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
+    <div class="col-md-6"><input class="form-control mb-1" id="Data" placeholder="Data" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
+  </div>
 
-    <div class="row g-3 mb-3">
-      <div class="col-md-6">
-        <label>Endereço</label>
-        <input type="text" class="form-control obrigatorio" id="endereco" />
-      </div>
-      <div class="col-md-3">
-        <label>Cidade</label>
-        <input type="text" class="form-control obrigatorio" id="cidade" />
-      </div>
-      <div class="col-md-3">
-        <label>Telefone</label>
-        <input type="text" class="form-control" id="telefone" />
-      </div>
-    </div>
+  <!-- Filial / Fornecedor -->
+  <h5>Filial / Fornecedor</h5>
+  <div class="row">
+    <div class="col-md-6"><input class="form-control mb-1" id="Nome Filial" placeholder="Nome Filial" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
+    <div class="col-md-6"><input class="form-control mb-1" id="Endereço Filial" placeholder="Endereço Filial" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
+    <div class="col-md-6"><input class="form-control mb-1" id="Telefone Filial" placeholder="Telefone Filial" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
+    <div class="col-md-6"><input type="email" class="form-control mb-1" id="E-mail Filial" placeholder="E-mail Filial" required><div class="invalid-feedback">⚠️ Digite um e-mail válido.</div></div>
+    <div class="col-md-6"><input class="form-control mb-1" id="Ramal" placeholder="Ramal" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
+    <div class="col-md-6"><input class="form-control mb-1" id="Cidade/Estado Filial" placeholder="Cidade/Estado Filial" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
+  </div>
 
-    <div class="titulo-secao">Filial / Fornecedor</div>
-    <div class="row g-3 mb-3">
-      <div class="col-md-4">
-        <label>Nome</label>
-        <input type="text" class="form-control obrigatorio" id="filial_nome" />
-      </div>
-      <div class="col-md-4">
-        <label>Ramal</label>
-        <input type="text" class="form-control" id="filial_ramal" />
-      </div>
-      <div class="col-md-4">
-        <label>E-mail</label>
-        <input type="email" class="form-control" id="filial_email" />
-      </div>
-    </div>
+  <div class="mb-3">
+    <label>Prazo de Entrega</label>
+    <input class="form-control" id="prazo" placeholder="Prazo de entrega" value="IMEDIATO" required>
+    <div class="invalid-feedback">⚠️ Preencha este campo.</div>
+  </div>
 
-    <div class="row g-3 mb-3">
-      <div class="col-md-6">
-        <label>Endereço</label>
-        <input type="text" class="form-control obrigatorio" id="filial_end" />
-      </div>
-      <div class="col-md-3">
-        <label>Cidade</label>
-        <input type="text" class="form-control obrigatorio" id="filial_cidade" />
-      </div>
-      <div class="col-md-3">
-        <label>Telefone Responsável</label>
-        <input type="text" class="form-control" id="filial_tel_resp" />
-      </div>
-    </div>
+  <hr>
 
-    <div class="titulo-secao">Condição de Pagamento</div>
-    <div class="row g-3 mb-4">
-      <div class="col-md-6">
-        <input type="text" class="form-control obrigatorio" id="cond_pagamento" />
-      </div>
-    </div>
-
-    <div class="titulo-secao">Inclusão de Produtos</div>
-    <table class="table table-bordered text-center align-middle" id="tabela_itens">
-      <thead>
+  <!-- Inclusão de Produtos (Nova versão dinâmica) -->
+  <h5>Inclusão de Produtos</h5>
+  <div id="area-itens" class="mb-4">
+    <table class="table table-bordered align-middle" id="tabela_itens">
+      <thead style="background-color: white; color: #004aad; text-align:center;">
         <tr>
-          <th>#</th>
-          <th>Qtd</th>
-          <th>Código</th>
+          <th style="width:5%">Item</th>
+          <th style="width:10%">Qtd</th>
+          <th style="width:15%">Código</th>
           <th>Descrição</th>
-          <th>Preço Unit. (R$)</th>
-          <th>Total (R$)</th>
-          <th>Ação</th>
+          <th style="width:15%">Preço Unit. (R$)</th>
+          <th style="width:15%">Total (R$)</th>
+          <th style="width:8%">Ações</th>
         </tr>
       </thead>
       <tbody></tbody>
     </table>
-    <button type="button" class="btn btn-adicionar mb-3" onclick="adicionarLinha()">+ Adicionar Produto</button>
-
-    <div class="titulo-secao">Observações</div>
-    <textarea class="form-control mb-3" id="observacoes" rows="3"></textarea>
-
-    <div class="mensagem-info">
-      <b>Processo da ordem de compra:</b><br>
-      Enviar a ordem de compra emitida para análise. Após a análise financeira (poderá ser solicitado um valor de ENTRADA),
-      será necessário o requerimento assinado e carimbado pela empresa (cliente). Após o envio por e-mail do documento
-      assinado e carimbado, será liberado o limite e seguiremos com as instruções para realização da venda.
-    </div>
-
-    <div class="text-center mt-4">
-      <button class="btn btn-pdf px-4" id="gerarPDF">Gerar PDF</button>
-    </div>
+    <button class="btn btn-success mt-2" onclick="adicionarLinha()">Adicionar Produto</button>
   </div>
 
-  <script>
-    // === Controle de Itens (Compatível Firefox/Chrome/Edge) ===
-    let contador = 1;
-    let itens = [];
+  <!-- Pagamento -->
+  <h5>Condição de Pagamento</h5>
+  <div class="form-check form-check-inline"><input class="form-check-input" type="radio" name="pagamento" value="1x" checked><label class="form-check-label">Boleto em 1x</label></div>
+  <div class="form-check form-check-inline"><input class="form-check-input" type="radio" name="pagamento" value="2x"><label class="form-check-label">Boleto em 2x</label></div>
+  <div class="form-check form-check-inline"><input class="form-check-input" type="radio" name="pagamento" value="3x"><label class="form-check-label">Boleto em 3x</label></div>
 
-    function formatarValor(valor) {
-      valor = valor.replace(/\D/g, "");
-      if (!valor) return "";
-      valor = (parseFloat(valor) / 100).toFixed(2);
-      return valor.replace(".", ",").replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    }
+  <!-- Observações -->
+  <div class="mt-3">
+    <label>Observações</label>
+    <input class="form-control" id="obs" placeholder="Observações (opcional)">
+  </div>
 
-    function adicionarLinha() {
-      const tabela = document.querySelector("#tabela_itens tbody");
-      const linha = document.createElement("tr");
-      linha.innerHTML = `
-        <td class="text-center">${contador}</td>
-        <td><input type="number" class="form-control qtd" min="0" placeholder="Qtd"></td>
-        <td><input type="text" class="form-control cod"></td>
-        <td><input type="text" class="form-control desc"></td>
-        <td><input type="text" class="form-control preco" placeholder="0,00"></td>
-        <td class="text-end total">0,00</td>
-        <td class="text-center"><button type="button" class="btn btn-sm btn-danger btn-remover">X</button></td>
-      `;
-      tabela.appendChild(linha);
-      contador++;
-    }
+  <div class="info-box mt-4">
+    <b>Processo da ordem de compra:</b><br>
+    Enviar a ordem de compra emitida para análise. Após a análise financeira (poderá ser solicitado um valor de ENTRADA), será necessário o requerimento assinado e carimbado pela empresa (cliente). Após o envio por e-mail do documento assinado e carimbado, será liberado o limite e seguiremos com as instruções para realização da venda.
+  </div>
 
-    document.addEventListener("input", function (e) {
-      if (e.target.classList.contains("preco")) {
-        e.target.value = formatarValor(e.target.value);
-        calcularTotais();
-      }
-      if (e.target.classList.contains("qtd")) {
-        calcularTotais();
-      }
+  <div class="text-center mt-4">
+    <button class="btn btn-primary" onclick="gerarPDF()">Gerar PDF</button>
+    <button class="btn btn-secondary" onclick="limpar()">Limpar</button>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const tabela = document.getElementById("tabela-produtos").getElementsByTagName("tbody")[0];
+  const btnAdd = document.getElementById("addProduto");
+  const btnGerar = document.getElementById("gerarPDF");
+
+  function formatarNumero(valor) {
+    if (!valor) return "";
+    const num = parseFloat(valor.replace(/\./g, "").replace(",", "."));
+    return isNaN(num) ? "" : num.toFixed(2).replace(".", ",");
+  }
+
+  function atualizarTotais(linha) {
+    const qtd = parseFloat(linha.querySelector(".qtd").value.replace(",", ".")) || 0;
+    const preco = parseFloat(linha.querySelector(".preco").value.replace(",", ".")) || 0;
+    const total = qtd * preco;
+    linha.querySelector(".tot").value = total > 0 ? total.toFixed(2).replace(".", ",") : "";
+  }
+
+  function adicionarLinha(item = {}) {
+    const linha = tabela.insertRow();
+    linha.innerHTML = `
+      <td><input type="text" class="form-control qtd" value="${item.qtd || ""}" /></td>
+      <td><input type="text" class="form-control cod" value="${item.cod || ""}" /></td>
+      <td><input type="text" class="form-control desc" value="${item.desc || ""}" /></td>
+      <td><input type="text" class="form-control preco" value="${item.preco || ""}" /></td>
+      <td><input type="text" class="form-control tot" value="${item.tot || ""}" readonly /></td>
+      <td><button type="button" class="btn btn-danger btn-sm remover">X</button></td>
+    `;
+
+    linha.querySelectorAll("input").forEach(input => {
+      input.addEventListener("input", () => atualizarTotais(linha));
     });
 
-    document.addEventListener("click", function (e) {
-      if (e.target.classList.contains("btn-remover")) {
-        e.target.closest("tr").remove();
-        calcularTotais();
-      }
-    });
+    linha.querySelector(".remover").addEventListener("click", () => linha.remove());
+  }
 
-    function calcularTotais() {
-      const linhas = document.querySelectorAll("#tabela_itens tbody tr");
-      itens = [];
-      linhas.forEach((linha) => {
-        const qtd = parseFloat(linha.querySelector(".qtd")?.value) || 0;
-        const cod = linha.querySelector(".cod")?.value || "";
-        const desc = linha.querySelector(".desc")?.value || "";
-        const precoStr = linha.querySelector(".preco")?.value || "0";
-        const preco = parseFloat(precoStr.replace(/\./g, "").replace(",", ".")) || 0;
-        const total = qtd * preco;
-        const totalFmt = total.toLocaleString("pt-BR", { minimumFractionDigits: 2 });
-        linha.querySelector(".total").textContent = totalFmt;
-        itens.push({
-          qtd: qtd.toString(),
-          cod,
-          desc,
-          preco: preco.toLocaleString("pt-BR", { minimumFractionDigits: 2 }),
-          tot: totalFmt
-        });
+  btnAdd.addEventListener("click", () => adicionarLinha());
+
+  btnGerar.addEventListener("click", async () => {
+    const cliente = Object.fromEntries(new FormData(document.getElementById("formCliente")).entries());
+    const filial = Object.fromEntries(new FormData(document.getElementById("formFilial")).entries());
+    const obs = document.getElementById("obs").value;
+    const pagamento = document.getElementById("pagamento").value;
+    const prazo = document.getElementById("prazo").value;
+
+    const itens = Array.from(tabela.rows).map(r => ({
+      qtd: r.querySelector(".qtd")?.value || "",
+      cod: r.querySelector(".cod")?.value || "",
+      desc: r.querySelector(".desc")?.value || "",
+      preco: r.querySelector(".preco")?.value || "",
+      tot: r.querySelector(".tot")?.value || ""
+    }));
+
+    try {
+      const response = await fetch("/gerar_pdf", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ cliente, filial, obs, pagamento, prazo, itens })
       });
+
+      if (!response.ok) throw new Error("Erro ao gerar PDF");
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "Ordem_Compra.pdf";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      alert("Erro ao gerar PDF. Verifique os dados e tente novamente.");
+      console.error(err);
     }
-  </script>
+  });
+});
+</script>
 </body>
 </html>
