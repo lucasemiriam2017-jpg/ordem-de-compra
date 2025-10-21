@@ -410,5 +410,18 @@ document.addEventListener("DOMContentLoaded", function () {
   };
 }); // end DOMContentLoaded
 </script>
+  
+  <!-- Detector de navegador: carrega script especial para Firefox -->
+<script>
+  (function() {
+    var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+    if (isFirefox) {
+      var script = document.createElement('script');
+      script.src = '/static/firefox.js';
+      document.body.appendChild(script);
+      console.log("🔥 Script especial para Firefox carregado!");
+    }
+  })();
+</script>
 </body>
 </html>
