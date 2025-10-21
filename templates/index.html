@@ -106,140 +106,74 @@ input.is-invalid + .invalid-feedback {
   </div>
 
   <div class="text-center mt-4">
-    <button class="btn btn-primary" onclick="gerarPDF()">Gerar PDF</button>
+    <button class="btn btn-primary" id="btnGerarPdf" onclick="gerarPDF()">Gerar PDF</button>
     <button class="btn btn-secondary" onclick="limpar()">Limpar</button>
   </div>
 </div>
 
+<!-- Script principal (corrigido, compatível com Firefox/Chrome) -->
 <script>
-/* Substitua todo o bloco <script> do seu index.html por este.
-   Compatível com Firefox / Chrome / Edge. */
 document.addEventListener("DOMContentLoaded", function () {
-  // --- Elementos comuns (máscaras)
+  // máscaras e init
   var cnpj = document.getElementById("CNPJ");
   var telefone = document.getElementById("Telefone");
   var telefoneFilial = document.getElementById("Telefone Filial");
   var data = document.getElementById("Data");
 
-  function maskCNPJ(v) {
-    return v.replace(/\D/g,"")
-            .replace(/^(\d{2})(\d)/,"$1.$2")
-            .replace(/^(\d{2})\.(\d{3})(\d)/,"$1.$2.$3")
-            .replace(/\.(\d{3})(\d)/,".$1/$2")
-            .replace(/(\d{4})(\d)/,"$1-$2")
-            .slice(0,18);
-  }
-  function maskTel(v) {
-    return v.replace(/\D/g,"")
-            .replace(/^(\d{2})(\d)/g,"($1) $2")
-            .replace(/(\d{5})(\d{4})$/,"$1-$2")
-            .slice(0,15);
-  }
+  function maskCNPJ(v){ return v.replace(/\D/g,"").replace(/^(\d{2})(\d)/,"$1.$2").replace(/^(\d{2})\.(\d{3})(\d)/,"$1.$2.$3").replace(/\.(\d{3})(\d)/,".$1/$2").replace(/(\d{4})(\d)/,"$1-$2").slice(0,18); }
+  function maskTel(v){ return v.replace(/\D/g,"").replace(/^(\d{2})(\d)/g,"($1) $2").replace(/(\d{5})(\d{4})$/,"$1-$2").slice(0,15); }
 
-  if (cnpj) {
-    cnpj.addEventListener("input", function (e) {
-      e.target.value = maskCNPJ(e.target.value);
-    });
-  }
-  if (telefone) {
-    telefone.addEventListener("input", function (e) {
-      e.target.value = maskTel(e.target.value);
-    });
-  }
-  if (telefoneFilial) {
-    telefoneFilial.addEventListener("input", function (e) {
-      e.target.value = maskTel(e.target.value);
-    });
-  }
-  if (data) {
-    data.value = new Date().toLocaleDateString("pt-BR");
-  }
+  if(cnpj) cnpj.addEventListener("input", function(e){ e.target.value = maskCNPJ(e.target.value); });
+  if(telefone) telefone.addEventListener("input", function(e){ e.target.value = maskTel(e.target.value); });
+  if(telefoneFilial) telefoneFilial.addEventListener("input", function(e){ e.target.value = maskTel(e.target.value); });
+  if(data) data.value = new Date().toLocaleDateString("pt-BR");
 
-  // --- Referências da tabela
+  // tabela
   var tabelaBody = document.querySelector("#tabela_itens tbody");
-  if (!tabelaBody) {
-    // caso não exista, cria uma mensagem no console e sai
-    console.error("Tabela de itens (#tabela_itens tbody) não encontrada.");
-    return;
-  }
-
+  if(!tabelaBody){ console.error("Tabela de itens não encontrada"); return; }
   var contador = 1;
   var itens = [];
 
-  function formatarValor(valor) {
-    var s = String(valor).replace(/\D/g, "");
-    if (!s) return "";
-    var num = (parseFloat(s) / 100).toFixed(2);
-    // trocar ponto por vírgula e inserir separador de milhares
+  function formatarValor(valor){
+    var s = String(valor).replace(/\D/g,"");
+    if(!s) return "";
+    var num = (parseFloat(s)/100).toFixed(2);
     var partes = num.split(".");
-    var inteiros = partes[0];
-    var decimais = partes[1];
-    // inserir pontos de milhares
-    inteiros = inteiros.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    var inteiros = partes[0], decimais = partes[1];
+    inteiros = inteiros.replace(/\B(?=(\d{3})+(?!\d))/g,".");
     return inteiros + "," + decimais;
   }
 
-  function criarInput(classe, tipo, placeholder) {
+  function criarInput(classe, tipo, placeholder){
     var input = document.createElement("input");
     input.type = tipo || "text";
     input.className = "form-control " + (classe || "");
-    if (placeholder) input.placeholder = placeholder;
+    if(placeholder) input.placeholder = placeholder;
     return input;
   }
 
-  // exposição global para o botão inline: window.adicionarLinha()
-  window.adicionarLinha = function () {
+  window.adicionarLinha = function(){
     var tr = document.createElement("tr");
-
-    var tdItem = document.createElement("td");
-    tdItem.className = "text-center";
-    tdItem.textContent = contador;
-
-    var tdQtd = document.createElement("td");
-    var inpQtd = criarInput("qtd", "number", "Qtd");
-    inpQtd.min = "0";
-    tdQtd.appendChild(inpQtd);
-
-    var tdCod = document.createElement("td");
-    tdCod.appendChild(criarInput("cod", "text", ""));
-
-    var tdDesc = document.createElement("td");
-    tdDesc.appendChild(criarInput("desc", "text", ""));
-
-    var tdPreco = document.createElement("td");
-    var inpPreco = criarInput("preco", "text", "0,00");
-    tdPreco.appendChild(inpPreco);
-
-    var tdTotal = document.createElement("td");
-    tdTotal.className = "text-end total";
-    tdTotal.textContent = "0,00";
-
-    var tdAcoes = document.createElement("td");
-    tdAcoes.className = "text-center";
-    var btnRem = document.createElement("button");
-    btnRem.type = "button";
-    btnRem.className = "btn btn-sm btn-danger btn-remover";
-    btnRem.textContent = "X";
+    var tdItem = document.createElement("td"); tdItem.className="text-center"; tdItem.textContent=contador;
+    var tdQtd = document.createElement("td"); var inpQtd = criarInput("qtd","number","Qtd"); inpQtd.min="0"; tdQtd.appendChild(inpQtd);
+    var tdCod = document.createElement("td"); tdCod.appendChild(criarInput("cod","text",""));
+    var tdDesc = document.createElement("td"); tdDesc.appendChild(criarInput("desc","text",""));
+    var tdPreco = document.createElement("td"); var inpPreco = criarInput("preco","text","0,00"); tdPreco.appendChild(inpPreco);
+    var tdTotal = document.createElement("td"); tdTotal.className="text-end total"; tdTotal.textContent="0,00";
+    var tdAcoes = document.createElement("td"); tdAcoes.className="text-center";
+    var btnRem = document.createElement("button"); btnRem.type="button"; btnRem.className="btn btn-sm btn-danger btn-remover"; btnRem.textContent="X";
     tdAcoes.appendChild(btnRem);
 
-    tr.appendChild(tdItem);
-    tr.appendChild(tdQtd);
-    tr.appendChild(tdCod);
-    tr.appendChild(tdDesc);
-    tr.appendChild(tdPreco);
-    tr.appendChild(tdTotal);
-    tr.appendChild(tdAcoes);
-
+    tr.appendChild(tdItem); tr.appendChild(tdQtd); tr.appendChild(tdCod); tr.appendChild(tdDesc);
+    tr.appendChild(tdPreco); tr.appendChild(tdTotal); tr.appendChild(tdAcoes);
     tabelaBody.appendChild(tr);
     contador++;
-    // Não precisa adicionar listeners por linha (usamos delegation)
   };
 
-  // recalcula totais lendo todas as linhas e popula `itens`
-  function calcularTotais() {
+  function calcularTotais(){
     itens = [];
     var rows = tabelaBody.querySelectorAll("tr");
-    for (var i = 0; i < rows.length; i++) {
+    for(var i=0;i<rows.length;i++){
       var linha = rows[i];
       var qtdInp = linha.querySelector(".qtd");
       var codInp = linha.querySelector(".cod");
@@ -248,178 +182,128 @@ document.addEventListener("DOMContentLoaded", function () {
       var totalCell = linha.querySelector(".total");
 
       var qtd = 0;
-      if (qtdInp && qtdInp.value !== "") {
-        qtd = parseFloat(String(qtdInp.value).replace(",", "."));
-        if (isNaN(qtd)) qtd = 0;
-      }
+      if(qtdInp && qtdInp.value !== ""){ qtd = parseFloat(String(qtdInp.value).replace(",", ".")); if(isNaN(qtd)) qtd = 0; }
 
       var preco = 0;
-      if (precoInp && precoInp.value !== "") {
-        var p = String(precoInp.value).replace(/\./g, "").replace(",", ".");
+      if(precoInp && precoInp.value !== ""){
+        var p = String(precoInp.value).replace(/\./g,"").replace(",", ".");
         preco = parseFloat(p);
-        if (isNaN(preco)) preco = 0;
+        if(isNaN(preco)) preco = 0;
       }
 
       var total = qtd * preco;
-      var totalFmt = (total).toLocaleString("pt-BR", { minimumFractionDigits: 2 });
-      if (totalCell) totalCell.textContent = totalFmt;
+      var totalFmt = total.toLocaleString("pt-BR",{minimumFractionDigits:2});
+      if(totalCell) totalCell.textContent = totalFmt;
 
       itens.push({
         qtd: qtd.toString(),
         cod: codInp ? codInp.value : "",
         desc: descInp ? descInp.value : "",
-        preco: (preco).toLocaleString("pt-BR", { minimumFractionDigits: 2 }),
+        preco: (preco).toLocaleString("pt-BR",{minimumFractionDigits:2}),
         tot: totalFmt
       });
     }
   }
 
-  // Delegation: captura input dentro da tabela (formatação e recalculo)
-  tabelaBody.addEventListener("input", function (evt) {
-    var target = evt.target || evt.srcElement;
-    if (!target) return;
-    if (target.classList && target.classList.contains("preco")) {
-      var cur = target.value;
-      target.value = formatarValor(cur);
+  // delegation para inputs na tabela
+  tabelaBody.addEventListener("input", function(evt){
+    var t = evt.target || evt.srcElement;
+    if(!t) return;
+    if(t.classList && t.classList.contains("preco")){
+      t.value = formatarValor(t.value);
       calcularTotais();
       return;
     }
-    if (target.classList && target.classList.contains("qtd")) {
+    if(t.classList && t.classList.contains("qtd")){
       calcularTotais();
       return;
     }
   });
 
-  // Delegation: captura clicks (remover linha)
-  tabelaBody.addEventListener("click", function (evt) {
-    var target = evt.target || evt.srcElement;
-    if (!target) return;
-    if (target.classList && target.classList.contains("btn-remover")) {
-      var tr = target.closest("tr");
-      if (tr && tr.parentNode) {
-        tr.parentNode.removeChild(tr);
-        calcularTotais();
-      }
+  // delegation para remover linha
+  tabelaBody.addEventListener("click", function(evt){
+    var t = evt.target || evt.srcElement;
+    if(!t) return;
+    if(t.classList && t.classList.contains("btn-remover")){
+      var tr = t.closest("tr");
+      if(tr && tr.parentNode){ tr.parentNode.removeChild(tr); calcularTotais(); }
     }
   });
 
-  // Validação suave (mantém sua lógica)
+  // validação suave
   var requiredInputs = document.querySelectorAll("input[required]");
-  for (var k = 0; k < requiredInputs.length; k++) {
-    (function (input) {
-      input.addEventListener("blur", function () {
-        if (!String(input.value || "").trim()) input.classList.add("is-invalid");
-      });
-      input.addEventListener("input", function () {
-        if (String(input.value || "").trim()) input.classList.remove("is-invalid");
-      });
+  for(var k=0;k<requiredInputs.length;k++){
+    (function(input){
+      input.addEventListener("blur", function(){ if(!String(input.value||"").trim()) input.classList.add("is-invalid"); });
+      input.addEventListener("input", function(){ if(String(input.value||"").trim()) input.classList.remove("is-invalid"); });
     })(requiredInputs[k]);
   }
 
-  // expor gerarPDF e limpar globalmente (botões inline chamam estas funções)
-  window.gerarPDF = async function () {
-    // checar obrigatórios
+  // gerar PDF
+  window.gerarPDF = async function(){
     var obrigatorios = ["Empresa","CNPJ","Inscrição Estadual","Endereço","Cidade/Estado","Telefone","E-mail","Nome do Responsável","Data","Nome Filial","Endereço Filial","Telefone Filial","E-mail Filial","Ramal","Cidade/Estado Filial","prazo"];
     var primeiroErro = null;
-    for (var i = 0; i < obrigatorios.length; i++) {
+    for(var i=0;i<obrigatorios.length;i++){
       var id = obrigatorios[i];
       var el = document.getElementById(id);
-      if (el && !String(el.value || "").trim()) {
-        el.classList.add("is-invalid");
-        if (!primeiroErro) primeiroErro = el;
-      }
+      if(el && !String(el.value||"").trim()){ el.classList.add("is-invalid"); if(!primeiroErro) primeiroErro = el; }
     }
-    if (primeiroErro) {
-      primeiroErro.scrollIntoView({ behavior: "smooth", block: "center" });
-      primeiroErro.focus();
-      return;
-    }
+    if(primeiroErro){ primeiroErro.scrollIntoView({behavior:"smooth", block:"center"}); primeiroErro.focus(); return; }
 
-    // recalcula antes de enviar
     calcularTotais();
-    if (itens.length === 0) {
-      alert("⚠️ Adicione ao menos um item antes de gerar o PDF.");
-      return;
-    }
+    if(itens.length === 0){ alert("⚠️ Adicione ao menos um item antes de gerar o PDF."); return; }
 
-    // montar payload
     var cliente = {};
     var camposCliente = ["Empresa","CNPJ","Inscrição Estadual","Endereço","Cidade/Estado","Telefone","E-mail","Nome do Responsável","Data"];
-    for (var ci = 0; ci < camposCliente.length; ci++) {
-      var idc = camposCliente[ci];
-      var elc = document.getElementById(idc);
-      cliente[idc] = elc ? elc.value : "";
-    }
+    for(var ci=0; ci<camposCliente.length; ci++){ var idc = camposCliente[ci]; var elc = document.getElementById(idc); cliente[idc] = elc ? elc.value : ""; }
 
     var filial = {};
     var camposFilial = ["Nome Filial","Endereço Filial","Telefone Filial","E-mail Filial","Ramal","Cidade/Estado Filial"];
-    for (var cf = 0; cf < camposFilial.length; cf++) {
-      var idf = camposFilial[cf];
-      var elf = document.getElementById(idf);
-      filial[idf] = elf ? elf.value : "";
-    }
+    for(var cf=0; cf<camposFilial.length; cf++){ var idf = camposFilial[cf]; var elf = document.getElementById(idf); filial[idf] = elf ? elf.value : ""; }
 
     var pagamento = (document.querySelector("input[name='pagamento']:checked") || {}).value || "";
-    var payload = {
-      cliente: cliente,
-      filial: filial,
-      itens: itens,
-      obs: (document.getElementById("obs") ? document.getElementById("obs").value : ""),
-      pagamento: pagamento,
-      prazo: (document.getElementById("prazo") ? document.getElementById("prazo").value : "")
-    };
+    var payload = { cliente: cliente, filial: filial, itens: itens, obs: (document.getElementById("obs")?document.getElementById("obs").value:""), pagamento: pagamento, prazo: (document.getElementById("prazo")?document.getElementById("prazo").value:"") };
 
-    try {
-      var resp = await fetch("/gerar_pdf", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
-      if (!resp.ok) {
-        var text = await resp.text();
-        throw new Error("Servidor retornou erro: " + (text || resp.statusText || resp.status));
-      }
+    try{
+      var resp = await fetch("/gerar_pdf", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+      if(!resp.ok){ var text = await resp.text(); throw new Error("Servidor retornou erro: " + (text || resp.statusText || resp.status)); }
       var blob = await resp.blob();
       var url = window.URL.createObjectURL(blob);
       var a = document.createElement("a");
       a.href = url;
       a.download = "Ordem_Compra.pdf";
-      // necessário para Firefox: elemento no DOM antes do click
-      document.body.appendChild(a);
+      document.body.appendChild(a); // necessário para Firefox
       a.click();
       a.remove();
       window.URL.revokeObjectURL(url);
-    } catch (err) {
+    } catch(err){
       console.error("Erro gerarPDF:", err);
       alert("Erro ao gerar PDF. Veja console para detalhes.");
     }
   };
 
-  window.limpar = function () {
+  // limpar
+  window.limpar = function(){
     var allInputs = document.querySelectorAll("input");
-    for (var ii = 0; ii < allInputs.length; ii++) {
-      allInputs[ii].value = "";
-      allInputs[ii].classList.remove("is-invalid");
-    }
-    if (document.getElementById("Data")) {
-      document.getElementById("Data").value = new Date().toLocaleDateString("pt-BR");
-    }
+    for(var ii=0; ii<allInputs.length; ii++){ allInputs[ii].value = ""; allInputs[ii].classList.remove("is-invalid"); }
+    if(document.getElementById("Data")) document.getElementById("Data").value = new Date().toLocaleDateString("pt-BR");
     tabelaBody.innerHTML = "";
     itens = [];
     contador = 1;
   };
+
 }); // end DOMContentLoaded
 </script>
-  
-  <!-- Detector de navegador: carrega script especial para Firefox -->
+
+<!-- Detector: se for Firefox carrega ajustes extras -->
 <script>
-  (function() {
+  (function(){
     var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
-    if (isFirefox) {
+    if(isFirefox){
       var script = document.createElement('script');
       script.src = '/static/firefox.js';
       document.body.appendChild(script);
-      console.log("🔥 Script especial para Firefox carregado!");
+      console.log("🔥 firefox.js solicitado");
     }
   })();
 </script>
