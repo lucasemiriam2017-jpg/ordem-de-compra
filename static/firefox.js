@@ -1,59 +1,42 @@
-// 🔥 Ajustes especiais para Firefox
-document.addEventListener("DOMContentLoaded", () => {
-  console.log("🔥 Correções para Firefox aplicadas");
+// firefox.js — correções específicas para Firefox
+document.addEventListener("DOMContentLoaded", function () {
+  console.log("firefox.js carregado");
 
-  // Força foco nos inputs criados dinamicamente (Firefox não aplicava automaticamente)
-  document.body.addEventListener("focus", (e) => {
-    if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") {
-      e.target.scrollIntoView({ block: "center", behavior: "smooth" });
-    }
+  // evita comportamento de scroll estranho ao focar inputs
+  document.body.addEventListener("focus", function (e) {
+    try {
+      if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA")) {
+        e.target.scrollIntoView({ block: "center", behavior: "smooth" });
+      }
+    } catch (err) { /* silencioso */ }
   }, true);
 
-  // Garante que o botão "Adicionar Produto" funcione corretamente
-  const addButton = document.getElementById("adicionarProduto");
-  if (addButton) {
-    addButton.addEventListener("click", (e) => {
-      e.preventDefault();
-      if (typeof adicionarLinha === "function") {
-        adicionarLinha();
-      } else {
-        console.warn("⚠️ Função adicionarLinha não encontrada");
-      }
-    });
+  // garante que botões com onclick inline chamem as funções globais
+  // (index.html já expõe window.adicionarLinha / gerarPDF / limpar)
+  // não é necessário re-declarar — isto apenas avisa caso falte.
+  if (typeof window.adicionarLinha !== "function") {
+    console.warn("firefox.js: função adicionarLinha não encontrada.");
+  }
+  if (typeof window.gerarPDF !== "function") {
+    console.warn("firefox.js: função gerarPDF não encontrada.");
   }
 
-  // Corrige comportamento do botão de gerar PDF
-  const btnGerar = document.getElementById("btnGerarPdf");
-  if (btnGerar) {
-    btnGerar.addEventListener("click", (e) => {
-      e.preventDefault();
-
-      try {
-        if (typeof gerarPDF === "function") {
-          gerarPDF();
-        } else {
-          console.warn("⚠️ Função gerarPDF não encontrada");
+  // pequenas proteções para inputs number no Firefox
+  var nums = document.querySelectorAll("input[type='number']");
+  for (var i = 0; i < nums.length; i++) {
+    (function(inp){
+      inp.addEventListener("wheel", function(e){ e.preventDefault(); });
+      inp.addEventListener("input", function(e){
+        if (e.target.value && e.target.value.indexOf(",") !== -1) {
+          e.target.value = e.target.value.replace(",", ".");
         }
-      } catch (err) {
-        console.error("❌ Erro ao tentar gerar o PDF no Firefox:", err);
-        alert("Erro ao gerar PDF. Tente novamente.");
-      }
-    });
+      });
+    })(nums[i]);
   }
 
-  // Corrige formatação dos inputs numéricos no Firefox
-  document.querySelectorAll("input[type='number']").forEach(input => {
-    input.addEventListener("wheel", (e) => e.preventDefault());
-    input.addEventListener("input", (e) => {
-      if (e.target.value.includes(",")) {
-        e.target.value = e.target.value.replace(",", ".");
-      }
-    });
-  });
-
-  // Ajuste visual fino (Firefox tinha margens extras em tabelas dinâmicas)
-  const tabelas = document.querySelectorAll("table");
-  tabelas.forEach(tb => {
-    tb.style.borderCollapse = "collapse";
-  });
+  // força collapse de bordas para tabelas (corrige visual)
+  var tbs = document.querySelectorAll("table");
+  for (var j = 0; j < tbs.length; j++) {
+    tbs[j].style.borderCollapse = "collapse";
+  }
 });
