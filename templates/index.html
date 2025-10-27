@@ -14,6 +14,7 @@ input.is-invalid { border-color: #dc3545 !important; }
 .invalid-feedback { display: none; color: #dc3545; font-size: 0.9em; margin-top: 2px; }
 input.is-invalid + .invalid-feedback { display: block; }
 .info-box { background: #f1f5ff; border-left: 4px solid #0d6efd; padding: 10px 15px; border-radius: 6px; font-size: 0.95em; margin-bottom: 20px; }
+table.table tbody tr td { vertical-align: middle; }
 </style>
 </head>
 <body>
@@ -26,24 +27,24 @@ input.is-invalid + .invalid-feedback { display: block; }
   <div class="row">
     <div class="col-md-6"><input class="form-control mb-1" id="Empresa" placeholder="Empresa" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
     <div class="col-md-6"><input class="form-control mb-1" id="CNPJ" placeholder="CNPJ" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
-    <div class="col-md-6"><input class="form-control mb-1" id="Inscrição Estadual" placeholder="Inscrição Estadual" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
-    <div class="col-md-6"><input class="form-control mb-1" id="Endereço" placeholder="Endereço" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
-    <div class="col-md-6"><input class="form-control mb-1" id="Cidade/Estado" placeholder="Cidade/Estado" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
+    <div class="col-md-6"><input class="form-control mb-1" id="InscricaoEstadual" placeholder="Inscrição Estadual" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
+    <div class="col-md-6"><input class="form-control mb-1" id="Endereco" placeholder="Endereço" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
+    <div class="col-md-6"><input class="form-control mb-1" id="CidadeEstado" placeholder="Cidade/Estado" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
     <div class="col-md-6"><input class="form-control mb-1" id="Telefone" placeholder="Telefone" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
-    <div class="col-md-6"><input type="email" class="form-control mb-1" id="E-mail" placeholder="E-mail (para recebimento de boleto)" required><div class="invalid-feedback">⚠️ Digite um e-mail válido.</div></div>
-    <div class="col-md-6"><input class="form-control mb-1" id="Nome do Responsável" placeholder="Nome do Responsável" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
+    <div class="col-md-6"><input type="email" class="form-control mb-1" id="Email" placeholder="E-mail (para recebimento de boleto)" required><div class="invalid-feedback">⚠️ Digite um e-mail válido.</div></div>
+    <div class="col-md-6"><input class="form-control mb-1" id="NomeResponsavel" placeholder="Nome do Responsável" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
     <div class="col-md-6"><input class="form-control mb-1" id="Data" placeholder="Data" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
   </div>
 
   <!-- Filial / Fornecedor -->
   <h5>Filial / Fornecedor</h5>
   <div class="row">
-    <div class="col-md-6"><input class="form-control mb-1" id="Nome Filial" placeholder="Nome Filial" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
-    <div class="col-md-6"><input class="form-control mb-1" id="Endereço Filial" placeholder="Endereço Filial" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
-    <div class="col-md-6"><input class="form-control mb-1" id="Telefone Filial" placeholder="Telefone Filial" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
-    <div class="col-md-6"><input type="email" class="form-control mb-1" id="E-mail Filial" placeholder="E-mail Filial" required><div class="invalid-feedback">⚠️ Digite um e-mail válido.</div></div>
+    <div class="col-md-6"><input class="form-control mb-1" id="NomeFilial" placeholder="Nome Filial" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
+    <div class="col-md-6"><input class="form-control mb-1" id="EnderecoFilial" placeholder="Endereço Filial" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
+    <div class="col-md-6"><input class="form-control mb-1" id="TelefoneFilial" placeholder="Telefone Filial" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
+    <div class="col-md-6"><input type="email" class="form-control mb-1" id="EmailFilial" placeholder="E-mail Filial" required><div class="invalid-feedback">⚠️ Digite um e-mail válido.</div></div>
     <div class="col-md-6"><input class="form-control mb-1" id="Ramal" placeholder="Ramal" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
-    <div class="col-md-6"><input class="form-control mb-1" id="Cidade/Estado Filial" placeholder="Cidade/Estado Filial" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
+    <div class="col-md-6"><input class="form-control mb-1" id="CidadeEstadoFilial" placeholder="Cidade/Estado Filial" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
   </div>
 
   <div class="mb-3">
@@ -71,7 +72,7 @@ input.is-invalid + .invalid-feedback { display: block; }
       </thead>
       <tbody></tbody>
     </table>
-    <button class="btn btn-success mt-2" onclick="adicionarLinha()">Adicionar Produto</button>
+    <button class="btn btn-success mt-2" id="btnAdicionarProduto">Adicionar Produto</button>
   </div>
 
   <!-- Pagamento -->
@@ -80,7 +81,6 @@ input.is-invalid + .invalid-feedback { display: block; }
   <div class="form-check form-check-inline"><input class="form-check-input" type="radio" name="pagamento" value="2x"><label class="form-check-label">Boleto em 2x</label></div>
   <div class="form-check form-check-inline"><input class="form-check-input" type="radio" name="pagamento" value="3x"><label class="form-check-label">Boleto em 3x</label></div>
 
-  <!-- Observações -->
   <div class="mt-3">
     <label>Observações</label>
     <input class="form-control" id="obs" placeholder="Observações (opcional)">
@@ -88,135 +88,125 @@ input.is-invalid + .invalid-feedback { display: block; }
 
   <div class="info-box mt-4">
     <b>Processo da ordem de compra:</b><br>
-    Enviar a ordem de compra emitida para análise. Após análise financeira, será necessário envio do documento assinado e carimbado pela empresa.
+    Enviar a ordem de compra emitida para análise. Após a análise financeira (poderá ser solicitado um valor de ENTRADA), será necessário o requerimento assinado e carimbado pela empresa (cliente). Após o envio por e-mail do documento assinado e carimbado, será liberado o limite e seguiremos com as instruções para realização da venda.
   </div>
 
   <div class="text-center mt-4">
-    <button class="btn btn-primary" id="btnGerarPdf" onclick="gerarPDF()">Gerar PDF</button>
-    <button class="btn btn-secondary" onclick="limpar()">Limpar</button>
+    <button class="btn btn-primary" id="btnGerarPdf">Gerar PDF</button>
+    <button class="btn btn-secondary" id="btnLimpar">Limpar</button>
   </div>
 </div>
 
 <script>
-// Variáveis globais
-var tabelaBody, contador=1, itens=[];
+document.addEventListener("DOMContentLoaded", function(){
+  // ===== Variáveis globais =====
+  let contador = 1;
+  let itens = [];
+  const tabelaBody = document.querySelector("#tabela_itens tbody");
 
-// Função para criar inputs
-function criarInput(classe, tipo, placeholder){
-  var input = document.createElement("input");
-  input.type = tipo||"text"; input.className = "form-control " + (classe||"");
-  if(placeholder) input.placeholder = placeholder;
-  return input;
-}
+  // ===== Máscaras simples =====
+  function maskCNPJ(v){ return v.replace(/\D/g,"").replace(/^(\d{2})(\d)/,"$1.$2").replace(/^(\d{2})\.(\d{3})(\d)/,"$1.$2.$3").replace(/\.(\d{3})(\d)/,".$1/$2").replace(/(\d{4})(\d)/,"$1-$2").slice(0,18); }
+  function maskTel(v){ return v.replace(/\D/g,"").replace(/^(\d{2})(\d)/g,"($1) $2").replace(/(\d{5})(\d{4})$/,"$1-$2").slice(0,15); }
 
-// Adicionar linha
-function adicionarLinha(){
-  tabelaBody = tabelaBody || document.querySelector("#tabela_itens tbody");
-  var tr = document.createElement("tr");
-  tr.innerHTML = `
-    <td class="text-center">${contador}</td>
-    <td>${criarInputHTML("qtd","number","Qtd")}</td>
-    <td>${criarInputHTML("cod","text","")}</td>
-    <td>${criarInputHTML("desc","text","")}</td>
-    <td>${criarInputHTML("preco","text","0,00")}</td>
-    <td class="text-end total">0,00</td>
-    <td class="text-center"><button type="button" class="btn btn-sm btn-danger btn-remover">X</button></td>
-  `;
-  tabelaBody.appendChild(tr);
-  contador++;
-  attachEvents(tr);
-}
-
-// Criar input como string para innerHTML
-function criarInputHTML(classe,tipo,placeholder){
-  return `<input type="${tipo}" class="form-control ${classe}" placeholder="${placeholder||''}">`;
-}
-
-// Adicionar eventos de input e remover
-function attachEvents(tr){
-  var qtdInp = tr.querySelector(".qtd");
-  var precoInp = tr.querySelector(".preco");
-  var btnRem = tr.querySelector(".btn-remover");
-  qtdInp.addEventListener("input", calcularTotais);
-  precoInp.addEventListener("input", function(){
-    this.value = formatarValor(this.value);
-    calcularTotais();
-  });
-  btnRem.addEventListener("click", function(){
-    tr.remove();
-    calcularTotais();
-  });
-}
-
-// Formatação de valor
-function formatarValor(valor){
-  var s = String(valor).replace(/\D/g,"");
-  if(!s) return "";
-  var num = (parseFloat(s)/100).toFixed(2);
-  var partes = num.split(".");
-  var inteiros = partes[0].replace(/\B(?=(\d{3})+(?!\d))/g,".");
-  return inteiros + "," + partes[1];
-}
-
-// Calcular totais
-function calcularTotais(){
-  itens = [];
-  tabelaBody = tabelaBody || document.querySelector("#tabela_itens tbody");
-  var rows = tabelaBody.querySelectorAll("tr");
-  rows.forEach(function(linha){
-    var qtd = parseFloat(linha.querySelector(".qtd").value.replace(",",".")||0);
-    var preco = parseFloat(linha.querySelector(".preco").value.replace(".","").replace(",",".")||0);
-    var total = qtd*preco;
-    linha.querySelector(".total").textContent = total.toLocaleString("pt-BR",{minimumFractionDigits:2});
-    itens.push({
-      qtd: qtd.toString(),
-      cod: linha.querySelector(".cod").value,
-      desc: linha.querySelector(".desc").value,
-      preco: preco.toLocaleString("pt-BR",{minimumFractionDigits:2}),
-      tot: total.toLocaleString("pt-BR",{minimumFractionDigits:2})
+  ["CNPJ","Telefone","TelefoneFilial"].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.addEventListener("input", e=>{
+      if(id==="CNPJ") e.target.value=maskCNPJ(e.target.value);
+      else e.target.value=maskTel(e.target.value);
     });
   });
-}
 
-// Gerar PDF
-async function gerarPDF(){
-  var requiredIds = ["Empresa","CNPJ","Inscrição Estadual","Endereço","Cidade/Estado","Telefone","E-mail","Nome do Responsável","Data","Nome Filial","Endereço Filial","Telefone Filial","E-mail Filial","Ramal","Cidade/Estado Filial","prazo"];
-  for(var id of requiredIds){
-    var el = document.getElementById(id);
-    if(!el.value.trim()){ el.classList.add("is-invalid"); el.scrollIntoView({behavior:"smooth"}); el.focus(); return; }
+  // data atual
+  const dataEl = document.getElementById("Data");
+  if(dataEl) dataEl.value = new Date().toLocaleDateString("pt-BR");
+
+  // ===== Funções =====
+  window.adicionarLinha = function(){
+    const tr = document.createElement("tr");
+
+    const tdItem = document.createElement("td"); tdItem.className="text-center"; tdItem.textContent=contador;
+    const tdQtd = document.createElement("td"); const inpQtd = document.createElement("input"); inpQtd.type="number"; inpQtd.className="form-control qtd"; inpQtd.min=0; tdQtd.appendChild(inpQtd);
+    const tdCod = document.createElement("td"); tdCod.appendChild(document.createElement("input")); tdCod.firstChild.className="form-control cod";
+    const tdDesc = document.createElement("td"); tdDesc.appendChild(document.createElement("input")); tdDesc.firstChild.className="form-control desc";
+    const tdPreco = document.createElement("td"); tdPreco.appendChild(document.createElement("input")); tdPreco.firstChild.className="form-control preco"; tdPreco.firstChild.value="0,00";
+    const tdTotal = document.createElement("td"); tdTotal.className="text-end total"; tdTotal.textContent="0,00";
+    const tdAcoes = document.createElement("td"); tdAcoes.className="text-center";
+    const btnRem = document.createElement("button"); btnRem.type="button"; btnRem.className="btn btn-sm btn-danger btn-remover"; btnRem.textContent="X";
+    btnRem.addEventListener("click", ()=>{ tr.remove(); calcularTotais(); });
+    tdAcoes.appendChild(btnRem);
+
+    tr.append(tdItem, tdQtd, tdCod, tdDesc, tdPreco, tdTotal, tdAcoes);
+    tabelaBody.appendChild(tr);
+    contador++;
+  };
+
+  function calcularTotais(){
+    itens=[];
+    tabelaBody.querySelectorAll("tr").forEach(tr=>{
+      const qtd = parseFloat(tr.querySelector(".qtd")?.value.replace(",",".")||0);
+      const preco = parseFloat(tr.querySelector(".preco")?.value.replace(/\./g,"").replace(",",".")||0);
+      const total = qtd*preco;
+      tr.querySelector(".total").textContent = total.toLocaleString("pt-BR",{minimumFractionDigits:2});
+      itens.push({
+        qtd: qtd.toString(),
+        cod: tr.querySelector(".cod")?.value||"",
+        desc: tr.querySelector(".desc")?.value||"",
+        preco: preco.toLocaleString("pt-BR",{minimumFractionDigits:2}),
+        tot: total.toLocaleString("pt-BR",{minimumFractionDigits:2})
+      });
+    });
   }
-  calcularTotais();
-  if(itens.length==0){ alert("⚠️ Adicione ao menos um item antes de gerar o PDF."); return; }
 
-  var cliente = {}, filial = {};
-  ["Empresa","CNPJ","Inscrição Estadual","Endereço","Cidade/Estado","Telefone","E-mail","Nome do Responsável","Data"].forEach(id=>cliente[id]=document.getElementById(id).value);
-  ["Nome Filial","Endereço Filial","Telefone Filial","E-mail Filial","Ramal","Cidade/Estado Filial"].forEach(id=>filial[id]=document.getElementById(id).value);
+  tabelaBody.addEventListener("input", e=>{
+    if(e.target.classList.contains("preco") || e.target.classList.contains("qtd")) calcularTotais();
+  });
 
-  var pagamento = document.querySelector("input[name='pagamento']:checked").value;
-  var payload = {cliente,filial,itens,obs:document.getElementById("obs").value,pagamento,prazo:document.getElementById("prazo").value};
+  // ===== Expor funções globais para buttons =====
+  window.gerarPDF = async function(){
+    const obrigatorios = ["Empresa","CNPJ","InscricaoEstadual","Endereco","CidadeEstado","Telefone","Email","NomeResponsavel","Data",
+      "NomeFilial","EnderecoFilial","TelefoneFilial","EmailFilial","Ramal","CidadeEstadoFilial","prazo"];
+    let primeiroErro=null;
+    obrigatorios.forEach(id=>{
+      const el=document.getElementById(id);
+      if(el&&!el.value.trim()){ el.classList.add("is-invalid"); if(!primeiroErro) primeiroErro=el; }
+    });
+    if(primeiroErro){ primeiroErro.scrollIntoView({behavior:"smooth", block:"center"}); primeiroErro.focus(); return; }
 
-  try{
-    var resp = await fetch("/gerar_pdf",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
-    if(!resp.ok){ throw new Error(await resp.text()); }
-    var blob = await resp.blob();
-    var url = window.URL.createObjectURL(blob);
-    var a = document.createElement("a");
-    a.href=url; a.download="Ordem_Compra.pdf"; document.body.appendChild(a); a.click(); a.remove(); window.URL.revokeObjectURL(url);
-  } catch(e){ console.error(e); alert("Erro ao gerar PDF. Veja console."); }
-}
+    calcularTotais();
+    if(itens.length===0){ alert("⚠️ Adicione ao menos um item antes de gerar o PDF."); return; }
 
-// Limpar formulário
-function limpar(){
-  document.querySelectorAll("input").forEach(input=>input.value="");
-  document.querySelectorAll("input").forEach(input=>input.classList.remove("is-invalid"));
-  if(document.getElementById("Data")) document.getElementById("Data").value = new Date().toLocaleDateString("pt-BR");
-  tabelaBody = document.querySelector("#tabela_itens tbody");
-  tabelaBody.innerHTML=""; itens=[]; contador=1;
-}
+    const cliente={}, filial={};
+    ["Empresa","CNPJ","InscricaoEstadual","Endereco","CidadeEstado","Telefone","Email","NomeResponsavel","Data"].forEach(id=>cliente[id]=document.getElementById(id)?.value||"");
+    ["NomeFilial","EnderecoFilial","TelefoneFilial","EmailFilial","Ramal","CidadeEstadoFilial"].forEach(id=>filial[id]=document.getElementById(id)?.value||"");
+    const pagamento = document.querySelector("input[name='pagamento']:checked")?.value||"";
+    const payload={ cliente, filial, itens, obs:document.getElementById("obs")?.value||"", pagamento, prazo:document.getElementById("prazo")?.value||"" };
 
-// Inicialização
-document.addEventListener("DOMContentLoaded",function(){
-  if(document.getElementById("Data")) document.getElementById("Data").value = new Date().toLocaleDateString("pt-BR");
+    try{
+      const resp=await fetch("/gerar_pdf",{ method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(payload) });
+      if(!resp.ok){ const text=await resp.text(); throw new Error("Erro servidor: "+(text||resp.statusText)); }
+      const blob=await resp.blob();
+      const url=window.URL.createObjectURL(blob);
+      const a=document.createElement("a");
+      a.href=url; a.download="Ordem_Compra.pdf"; document.body.appendChild(a); a.click(); a.remove(); window.URL.revokeObjectURL(url);
+    } catch(err){ console.error(err); alert("Erro ao gerar PDF. Veja console."); }
+  };
+
+  window.limpar = function(){
+    document.querySelectorAll("input").forEach(i=>{ i.value=""; i.classList.remove("is-invalid"); });
+    if(dataEl) dataEl.value=new Date().toLocaleDateString("pt-BR");
+    tabelaBody.innerHTML=""; itens=[]; contador=1;
+  };
+
+  // ===== Adicionar Produto =====
+  document.getElementById("btnAdicionarProduto").addEventListener("click",()=>window.adicionarLinha());
+
+  // ===== Bloqueio scroll input number no Firefox =====
+  document.querySelectorAll("input[type='number']").forEach(inp=>{
+    inp.addEventListener("wheel", e=>e.preventDefault());
+    inp.addEventListener("input", e=>{
+      if(e.target.value.includes(",")) e.target.value=e.target.value.replace(",",".");
+    });
+  });
 });
 </script>
 </body>
