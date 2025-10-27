@@ -11,23 +11,9 @@ h5 { margin-top: 30px; }
 .logo { display: block; margin: 0 auto 15px; max-width: 200px; }
 #area-itens { margin-top: 25px; }
 input.is-invalid { border-color: #dc3545 !important; }
-.invalid-feedback {
-  display: none;
-  color: #dc3545;
-  font-size: 0.9em;
-  margin-top: 2px;
-}
-input.is-invalid + .invalid-feedback {
-  display: block;
-}
-.info-box {
-  background: #f1f5ff;
-  border-left: 4px solid #0d6efd;
-  padding: 10px 15px;
-  border-radius: 6px;
-  font-size: 0.95em;
-  margin-bottom: 20px;
-}
+.invalid-feedback { display: none; color: #dc3545; font-size: 0.9em; margin-top: 2px; }
+input.is-invalid + .invalid-feedback { display: block; }
+.info-box { background: #f1f5ff; border-left: 4px solid #0d6efd; padding: 10px 15px; border-radius: 6px; font-size: 0.95em; margin-bottom: 20px; }
 </style>
 </head>
 <body>
@@ -68,7 +54,7 @@ input.is-invalid + .invalid-feedback {
 
   <hr>
 
-  <!-- Inclusão de Produtos (Nova versão dinâmica) -->
+  <!-- Inclusão de Produtos -->
   <h5>Inclusão de Produtos</h5>
   <div id="area-itens" class="mb-4">
     <table class="table table-bordered align-middle" id="tabela_itens">
@@ -102,7 +88,7 @@ input.is-invalid + .invalid-feedback {
 
   <div class="info-box mt-4">
     <b>Processo da ordem de compra:</b><br>
-    Enviar a ordem de compra emitida para análise. Após a análise financeira (poderá ser solicitado um valor de ENTRADA), será necessário o requerimento assinado e carimbado pela empresa (cliente). Após o envio por e-mail do documento assinado e carimbado, será liberado o limite e seguiremos com as instruções para realização da venda.
+    Enviar a ordem de compra emitida para análise. Após análise financeira, será necessário envio do documento assinado e carimbado pela empresa.
   </div>
 
   <div class="text-center mt-4">
@@ -111,201 +97,127 @@ input.is-invalid + .invalid-feedback {
   </div>
 </div>
 
-<!-- Script principal (corrigido, compatível com Firefox/Chrome) -->
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-  // máscaras e init
-  var cnpj = document.getElementById("CNPJ");
-  var telefone = document.getElementById("Telefone");
-  var telefoneFilial = document.getElementById("Telefone Filial");
-  var data = document.getElementById("Data");
+// Variáveis globais
+var tabelaBody, contador=1, itens=[];
 
-  function maskCNPJ(v){ return v.replace(/\D/g,"").replace(/^(\d{2})(\d)/,"$1.$2").replace(/^(\d{2})\.(\d{3})(\d)/,"$1.$2.$3").replace(/\.(\d{3})(\d)/,".$1/$2").replace(/(\d{4})(\d)/,"$1-$2").slice(0,18); }
-  function maskTel(v){ return v.replace(/\D/g,"").replace(/^(\d{2})(\d)/g,"($1) $2").replace(/(\d{5})(\d{4})$/,"$1-$2").slice(0,15); }
+// Função para criar inputs
+function criarInput(classe, tipo, placeholder){
+  var input = document.createElement("input");
+  input.type = tipo||"text"; input.className = "form-control " + (classe||"");
+  if(placeholder) input.placeholder = placeholder;
+  return input;
+}
 
-  if(cnpj) cnpj.addEventListener("input", function(e){ e.target.value = maskCNPJ(e.target.value); });
-  if(telefone) telefone.addEventListener("input", function(e){ e.target.value = maskTel(e.target.value); });
-  if(telefoneFilial) telefoneFilial.addEventListener("input", function(e){ e.target.value = maskTel(e.target.value); });
-  if(data) data.value = new Date().toLocaleDateString("pt-BR");
+// Adicionar linha
+function adicionarLinha(){
+  tabelaBody = tabelaBody || document.querySelector("#tabela_itens tbody");
+  var tr = document.createElement("tr");
+  tr.innerHTML = `
+    <td class="text-center">${contador}</td>
+    <td>${criarInputHTML("qtd","number","Qtd")}</td>
+    <td>${criarInputHTML("cod","text","")}</td>
+    <td>${criarInputHTML("desc","text","")}</td>
+    <td>${criarInputHTML("preco","text","0,00")}</td>
+    <td class="text-end total">0,00</td>
+    <td class="text-center"><button type="button" class="btn btn-sm btn-danger btn-remover">X</button></td>
+  `;
+  tabelaBody.appendChild(tr);
+  contador++;
+  attachEvents(tr);
+}
 
-  // tabela
-  var tabelaBody = document.querySelector("#tabela_itens tbody");
-  if(!tabelaBody){ console.error("Tabela de itens não encontrada"); return; }
-  var contador = 1;
-  var itens = [];
+// Criar input como string para innerHTML
+function criarInputHTML(classe,tipo,placeholder){
+  return `<input type="${tipo}" class="form-control ${classe}" placeholder="${placeholder||''}">`;
+}
 
-  function formatarValor(valor){
-    var s = String(valor).replace(/\D/g,"");
-    if(!s) return "";
-    var num = (parseFloat(s)/100).toFixed(2);
-    var partes = num.split(".");
-    var inteiros = partes[0], decimais = partes[1];
-    inteiros = inteiros.replace(/\B(?=(\d{3})+(?!\d))/g,".");
-    return inteiros + "," + decimais;
-  }
-
-  function criarInput(classe, tipo, placeholder){
-    var input = document.createElement("input");
-    input.type = tipo || "text";
-    input.className = "form-control " + (classe || "");
-    if(placeholder) input.placeholder = placeholder;
-    return input;
-  }
-
-  window.adicionarLinha = function(){
-    var tr = document.createElement("tr");
-    var tdItem = document.createElement("td"); tdItem.className="text-center"; tdItem.textContent=contador;
-    var tdQtd = document.createElement("td"); var inpQtd = criarInput("qtd","number","Qtd"); inpQtd.min="0"; tdQtd.appendChild(inpQtd);
-    var tdCod = document.createElement("td"); tdCod.appendChild(criarInput("cod","text",""));
-    var tdDesc = document.createElement("td"); tdDesc.appendChild(criarInput("desc","text",""));
-    var tdPreco = document.createElement("td"); var inpPreco = criarInput("preco","text","0,00"); tdPreco.appendChild(inpPreco);
-    var tdTotal = document.createElement("td"); tdTotal.className="text-end total"; tdTotal.textContent="0,00";
-    var tdAcoes = document.createElement("td"); tdAcoes.className="text-center";
-    var btnRem = document.createElement("button"); btnRem.type="button"; btnRem.className="btn btn-sm btn-danger btn-remover"; btnRem.textContent="X";
-    tdAcoes.appendChild(btnRem);
-
-    tr.appendChild(tdItem); tr.appendChild(tdQtd); tr.appendChild(tdCod); tr.appendChild(tdDesc);
-    tr.appendChild(tdPreco); tr.appendChild(tdTotal); tr.appendChild(tdAcoes);
-    tabelaBody.appendChild(tr);
-    contador++;
-  };
-
-  function calcularTotais(){
-    itens = [];
-    var rows = tabelaBody.querySelectorAll("tr");
-    for(var i=0;i<rows.length;i++){
-      var linha = rows[i];
-      var qtdInp = linha.querySelector(".qtd");
-      var codInp = linha.querySelector(".cod");
-      var descInp = linha.querySelector(".desc");
-      var precoInp = linha.querySelector(".preco");
-      var totalCell = linha.querySelector(".total");
-
-      var qtd = 0;
-      if(qtdInp && qtdInp.value !== ""){ qtd = parseFloat(String(qtdInp.value).replace(",", ".")); if(isNaN(qtd)) qtd = 0; }
-
-      var preco = 0;
-      if(precoInp && precoInp.value !== ""){
-        var p = String(precoInp.value).replace(/\./g,"").replace(",", ".");
-        preco = parseFloat(p);
-        if(isNaN(preco)) preco = 0;
-      }
-
-      var total = qtd * preco;
-      var totalFmt = total.toLocaleString("pt-BR",{minimumFractionDigits:2});
-      if(totalCell) totalCell.textContent = totalFmt;
-
-      itens.push({
-        qtd: qtd.toString(),
-        cod: codInp ? codInp.value : "",
-        desc: descInp ? descInp.value : "",
-        preco: (preco).toLocaleString("pt-BR",{minimumFractionDigits:2}),
-        tot: totalFmt
-      });
-    }
-  }
-
-  // delegation para inputs na tabela
-  tabelaBody.addEventListener("input", function(evt){
-    var t = evt.target || evt.srcElement;
-    if(!t) return;
-    if(t.classList && t.classList.contains("preco")){
-      t.value = formatarValor(t.value);
-      calcularTotais();
-      return;
-    }
-    if(t.classList && t.classList.contains("qtd")){
-      calcularTotais();
-      return;
-    }
-  });
-
-  // delegation para remover linha
-  tabelaBody.addEventListener("click", function(evt){
-    var t = evt.target || evt.srcElement;
-    if(!t) return;
-    if(t.classList && t.classList.contains("btn-remover")){
-      var tr = t.closest("tr");
-      if(tr && tr.parentNode){ tr.parentNode.removeChild(tr); calcularTotais(); }
-    }
-  });
-
-  // validação suave
-  var requiredInputs = document.querySelectorAll("input[required]");
-  for(var k=0;k<requiredInputs.length;k++){
-    (function(input){
-      input.addEventListener("blur", function(){ if(!String(input.value||"").trim()) input.classList.add("is-invalid"); });
-      input.addEventListener("input", function(){ if(String(input.value||"").trim()) input.classList.remove("is-invalid"); });
-    })(requiredInputs[k]);
-  }
-
-  // gerar PDF
-  window.gerarPDF = async function(){
-    var obrigatorios = ["Empresa","CNPJ","Inscrição Estadual","Endereço","Cidade/Estado","Telefone","E-mail","Nome do Responsável","Data","Nome Filial","Endereço Filial","Telefone Filial","E-mail Filial","Ramal","Cidade/Estado Filial","prazo"];
-    var primeiroErro = null;
-    for(var i=0;i<obrigatorios.length;i++){
-      var id = obrigatorios[i];
-      var el = document.getElementById(id);
-      if(el && !String(el.value||"").trim()){ el.classList.add("is-invalid"); if(!primeiroErro) primeiroErro = el; }
-    }
-    if(primeiroErro){ primeiroErro.scrollIntoView({behavior:"smooth", block:"center"}); primeiroErro.focus(); return; }
-
+// Adicionar eventos de input e remover
+function attachEvents(tr){
+  var qtdInp = tr.querySelector(".qtd");
+  var precoInp = tr.querySelector(".preco");
+  var btnRem = tr.querySelector(".btn-remover");
+  qtdInp.addEventListener("input", calcularTotais);
+  precoInp.addEventListener("input", function(){
+    this.value = formatarValor(this.value);
     calcularTotais();
-    if(itens.length === 0){ alert("⚠️ Adicione ao menos um item antes de gerar o PDF."); return; }
+  });
+  btnRem.addEventListener("click", function(){
+    tr.remove();
+    calcularTotais();
+  });
+}
 
-    var cliente = {};
-    var camposCliente = ["Empresa","CNPJ","Inscrição Estadual","Endereço","Cidade/Estado","Telefone","E-mail","Nome do Responsável","Data"];
-    for(var ci=0; ci<camposCliente.length; ci++){ var idc = camposCliente[ci]; var elc = document.getElementById(idc); cliente[idc] = elc ? elc.value : ""; }
+// Formatação de valor
+function formatarValor(valor){
+  var s = String(valor).replace(/\D/g,"");
+  if(!s) return "";
+  var num = (parseFloat(s)/100).toFixed(2);
+  var partes = num.split(".");
+  var inteiros = partes[0].replace(/\B(?=(\d{3})+(?!\d))/g,".");
+  return inteiros + "," + partes[1];
+}
 
-    var filial = {};
-    var camposFilial = ["Nome Filial","Endereço Filial","Telefone Filial","E-mail Filial","Ramal","Cidade/Estado Filial"];
-    for(var cf=0; cf<camposFilial.length; cf++){ var idf = camposFilial[cf]; var elf = document.getElementById(idf); filial[idf] = elf ? elf.value : ""; }
+// Calcular totais
+function calcularTotais(){
+  itens = [];
+  tabelaBody = tabelaBody || document.querySelector("#tabela_itens tbody");
+  var rows = tabelaBody.querySelectorAll("tr");
+  rows.forEach(function(linha){
+    var qtd = parseFloat(linha.querySelector(".qtd").value.replace(",",".")||0);
+    var preco = parseFloat(linha.querySelector(".preco").value.replace(".","").replace(",",".")||0);
+    var total = qtd*preco;
+    linha.querySelector(".total").textContent = total.toLocaleString("pt-BR",{minimumFractionDigits:2});
+    itens.push({
+      qtd: qtd.toString(),
+      cod: linha.querySelector(".cod").value,
+      desc: linha.querySelector(".desc").value,
+      preco: preco.toLocaleString("pt-BR",{minimumFractionDigits:2}),
+      tot: total.toLocaleString("pt-BR",{minimumFractionDigits:2})
+    });
+  });
+}
 
-    var pagamento = (document.querySelector("input[name='pagamento']:checked") || {}).value || "";
-    var payload = { cliente: cliente, filial: filial, itens: itens, obs: (document.getElementById("obs")?document.getElementById("obs").value:""), pagamento: pagamento, prazo: (document.getElementById("prazo")?document.getElementById("prazo").value:"") };
+// Gerar PDF
+async function gerarPDF(){
+  var requiredIds = ["Empresa","CNPJ","Inscrição Estadual","Endereço","Cidade/Estado","Telefone","E-mail","Nome do Responsável","Data","Nome Filial","Endereço Filial","Telefone Filial","E-mail Filial","Ramal","Cidade/Estado Filial","prazo"];
+  for(var id of requiredIds){
+    var el = document.getElementById(id);
+    if(!el.value.trim()){ el.classList.add("is-invalid"); el.scrollIntoView({behavior:"smooth"}); el.focus(); return; }
+  }
+  calcularTotais();
+  if(itens.length==0){ alert("⚠️ Adicione ao menos um item antes de gerar o PDF."); return; }
 
-    try{
-      var resp = await fetch("/gerar_pdf", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-      if(!resp.ok){ var text = await resp.text(); throw new Error("Servidor retornou erro: " + (text || resp.statusText || resp.status)); }
-      var blob = await resp.blob();
-      var url = window.URL.createObjectURL(blob);
-      var a = document.createElement("a");
-      a.href = url;
-      a.download = "Ordem_Compra.pdf";
-      document.body.appendChild(a); // necessário para Firefox
-      a.click();
-      a.remove();
-      window.URL.revokeObjectURL(url);
-    } catch(err){
-      console.error("Erro gerarPDF:", err);
-      alert("Erro ao gerar PDF. Veja console para detalhes.");
-    }
-  };
+  var cliente = {}, filial = {};
+  ["Empresa","CNPJ","Inscrição Estadual","Endereço","Cidade/Estado","Telefone","E-mail","Nome do Responsável","Data"].forEach(id=>cliente[id]=document.getElementById(id).value);
+  ["Nome Filial","Endereço Filial","Telefone Filial","E-mail Filial","Ramal","Cidade/Estado Filial"].forEach(id=>filial[id]=document.getElementById(id).value);
 
-  // limpar
-  window.limpar = function(){
-    var allInputs = document.querySelectorAll("input");
-    for(var ii=0; ii<allInputs.length; ii++){ allInputs[ii].value = ""; allInputs[ii].classList.remove("is-invalid"); }
-    if(document.getElementById("Data")) document.getElementById("Data").value = new Date().toLocaleDateString("pt-BR");
-    tabelaBody.innerHTML = "";
-    itens = [];
-    contador = 1;
-  };
+  var pagamento = document.querySelector("input[name='pagamento']:checked").value;
+  var payload = {cliente,filial,itens,obs:document.getElementById("obs").value,pagamento,prazo:document.getElementById("prazo").value};
 
-}); // end DOMContentLoaded
-</script>
+  try{
+    var resp = await fetch("/gerar_pdf",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+    if(!resp.ok){ throw new Error(await resp.text()); }
+    var blob = await resp.blob();
+    var url = window.URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href=url; a.download="Ordem_Compra.pdf"; document.body.appendChild(a); a.click(); a.remove(); window.URL.revokeObjectURL(url);
+  } catch(e){ console.error(e); alert("Erro ao gerar PDF. Veja console."); }
+}
 
-<!-- Detector: se for Firefox carrega ajustes extras -->
-<script>
-  (function(){
-    var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
-    if(isFirefox){
-      var script = document.createElement('script');
-      script.src = '/static/firefox.js';
-      document.body.appendChild(script);
-      console.log("🔥 firefox.js solicitado");
-    }
-  })();
+// Limpar formulário
+function limpar(){
+  document.querySelectorAll("input").forEach(input=>input.value="");
+  document.querySelectorAll("input").forEach(input=>input.classList.remove("is-invalid"));
+  if(document.getElementById("Data")) document.getElementById("Data").value = new Date().toLocaleDateString("pt-BR");
+  tabelaBody = document.querySelector("#tabela_itens tbody");
+  tabelaBody.innerHTML=""; itens=[]; contador=1;
+}
+
+// Inicialização
+document.addEventListener("DOMContentLoaded",function(){
+  if(document.getElementById("Data")) document.getElementById("Data").value = new Date().toLocaleDateString("pt-BR");
+});
 </script>
 </body>
 </html>
