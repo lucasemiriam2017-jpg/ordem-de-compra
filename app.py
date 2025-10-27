@@ -5,7 +5,7 @@ from reportlab.lib.units import cm
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_CENTER, TA_LEFT
-import io, os, re
+import io, os, re, urllib.parse
 
 app = Flask(__name__)
 
@@ -34,12 +34,15 @@ def gerar_pdf():
     pagamento = data.get("pagamento", "")
     prazo = data.get("prazo", "")
 
+    if not itens:
+        return "Erro: Nenhum item adicionado.", 400
+
     # Criar PDF
     buffer = io.BytesIO()
     doc = SimpleDocTemplate(
         buffer, pagesize=A4,
         leftMargin=1.5 * cm, rightMargin=1.5 * cm,
-        topMargin=1.2 * cm, bottomMargin=2 * cm   # 🔹 Subido topo
+        topMargin=1.2 * cm, bottomMargin=2 * cm
     )
 
     s = getSampleStyleSheet()
@@ -52,7 +55,7 @@ def gerar_pdf():
     }
 
     e = []
-    # 🔹 Subiu a logo e título
+
     if os.path.exists(LOGO_PATH):
         logo = Image(LOGO_PATH, width=7.5 * cm, height=2.3 * cm)
         logo.hAlign = "CENTER"
@@ -60,14 +63,14 @@ def gerar_pdf():
 
     e += [Paragraph("<b>ORDEM DE COMPRA</b>", st["title"]), Spacer(1, 6)]
 
-    # 🔹 Empresa solicitante (centralizado)
+    # Empresa solicitante
     e.append(Paragraph("<b>EMPRESA SOLICITANTE</b>", st["center"]))
     cliente_data = [[Paragraph(f"<b>{k}</b>", st["n"]), Paragraph(str(v), st["n"])] for k, v in cliente.items()]
     tabela_cliente = Table(cliente_data, colWidths=[4 * cm, 11 * cm])
     tabela_cliente.setStyle(TableStyle([("GRID", (0, 0), (-1, -1), 0.4, colors.grey)]))
     e += [tabela_cliente, Spacer(1, 10)]
 
-    # 🔹 Filial / Fornecedor (centralizado)
+    # Filial / Fornecedor
     e.append(Paragraph("<b>FILIAL / FORNECEDOR</b>", st["center"]))
     filial_data = [[Paragraph(f"<b>{k}</b>", st["n"]), Paragraph(str(v), st["n"])] for k, v in filial.items()]
     tabela_filial = Table(filial_data, colWidths=[4 * cm, 11 * cm])
@@ -77,42 +80,42 @@ def gerar_pdf():
     e.append(Paragraph(f"<b>Prazo de Entrega:</b> {prazo}", st["n"]))
     e.append(Spacer(1, 16))
 
-    # 🔹 Lista de produtos (renomeado e espaçamento ajustado)
+    # Lista de produtos
     e.append(Paragraph("<b>LISTAGEM DE PRODUTOS</b>", st["center"]))
     e.append(Spacer(1, 8))
 
     cols = [1.2*cm, 1.0*cm, 3.2*cm, 8.3*cm, 3.1*cm, 2.3*cm]
     data_table = [["ITEM", "QTD", "CÓDIGO", "DESCRIÇÃO", "PREÇO UNIT (R$)", "TOTAL (R$)"]]
-    total = 0
+    total_geral = 0
 
     for i, item in enumerate(itens, start=1):
-        q = item["qtd"]
-        cod = item["cod"]
-        desc = item["desc"]
-        preco = float(item["preco"].replace(",", ".")) if item["preco"] else 0
-        tot = float(item["tot"].replace(",", ".")) if item["tot"] else 0
-        total += tot
-        p_fmt = f"R$ {preco:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")   # 🔹 Adiciona R$
-        t_fmt = f"R$ {tot:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")     # 🔹 Adiciona R$
-        data_table.append([str(i), q, cod, Paragraph(desc, st["tabela"]), p_fmt, t_fmt])
+        qtd = float(item.get("qtd", 0))
+        cod = item.get("cod", "")
+        desc = item.get("desc", "")
+        preco = float(str(item.get("preco","0").replace(".","").replace(",", ".")))
+        tot = float(str(item.get("tot","0").replace(".","").replace(",", ".")))
+        total_geral += tot
+        p_fmt = f"R$ {preco:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+        t_fmt = f"R$ {tot:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+        data_table.append([str(i), qtd, cod, Paragraph(desc, st["tabela"]), p_fmt, t_fmt])
 
-    total_fmt = f"{total:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+    total_fmt = f"{total_geral:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
     data_table.append(["", "", "", Paragraph("<b>TOTAL GERAL</b>", st["tabela"]), "", f"R$ {total_fmt}"])
 
     t = Table(data_table, colWidths=cols, repeatRows=1)
     t.setStyle(TableStyle([
-        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#004C99")),
-        ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
-        ("GRID", (0, 0), (-1, -1), 0.6, colors.grey),
-        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
-        ("ALIGN", (3, 1), (3, -1), "LEFT"),
-        ("ALIGN", (4, 1), (5, -1), "RIGHT"),
-        ("BOTTOMPADDING", (0, 0), (-1, -1), 6),  # 🔹 Mais respiro nas linhas
-        ("TOPPADDING", (0, 0), (-1, -1), 4),
+        ("BACKGROUND", (0,0), (-1,0), colors.HexColor("#004C99")),
+        ("TEXTCOLOR", (0,0), (-1,0), colors.whitesmoke),
+        ("GRID", (0,0), (-1,-1), 0.6, colors.grey),
+        ("ALIGN", (0,0), (-1,-1), "CENTER"),
+        ("ALIGN", (3,1), (3,-1), "LEFT"),
+        ("ALIGN", (4,1), (5,-1), "RIGHT"),
+        ("BOTTOMPADDING", (0,0), (-1,-1), 6),
+        ("TOPPADDING", (0,0), (-1,-1), 4),
     ]))
-    e += [t, Spacer(1, 20)]  # 🔹 Aumentado espaço após a tabela
+    e += [t, Spacer(1, 20)]
 
-    # 🔹 Pagamento e observações
+    # Pagamento e observações
     e.append(Paragraph(f"<b>Condição de Pagamento:</b> Boleto em {pagamento}", st["n"]))
     e.append(Spacer(1, 10))
 
@@ -128,8 +131,10 @@ def gerar_pdf():
 
     doc.build(e)
     buffer.seek(0)
-    nome_arquivo = f"{PDF_PREFIX}_{cliente.get('Empresa', 'Documento').replace(' ', '_')}.pdf"
-    return send_file(buffer, as_attachment=True, download_name=nome_arquivo, mimetype="application/pdf")
+
+    nome_arquivo = f"{PDF_PREFIX}_{cliente.get('Empresa','Documento').replace(' ','_')}.pdf"
+    safe_name = urllib.parse.quote(nome_arquivo)
+    return send_file(buffer, as_attachment=True, download_name=safe_name, mimetype="application/pdf")
 
 if __name__ == "__main__":
     app.run(debug=True)
