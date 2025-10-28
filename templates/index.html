@@ -14,7 +14,6 @@ input.is-invalid { border-color: #dc3545 !important; }
 .invalid-feedback { display: none; color: #dc3545; font-size: 0.9em; margin-top: 2px; }
 input.is-invalid + .invalid-feedback { display: block; }
 .info-box { background: #f1f5ff; border-left: 4px solid #0d6efd; padding: 10px 15px; border-radius: 6px; font-size: 0.95em; margin-bottom: 20px; }
-table.table tbody tr td { vertical-align: middle; }
 </style>
 </head>
 <body>
@@ -27,24 +26,24 @@ table.table tbody tr td { vertical-align: middle; }
   <div class="row">
     <div class="col-md-6"><input class="form-control mb-1" id="Empresa" placeholder="Empresa" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
     <div class="col-md-6"><input class="form-control mb-1" id="CNPJ" placeholder="CNPJ" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
-    <div class="col-md-6"><input class="form-control mb-1" id="InscricaoEstadual" placeholder="Inscrição Estadual" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
-    <div class="col-md-6"><input class="form-control mb-1" id="Endereco" placeholder="Endereço" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
-    <div class="col-md-6"><input class="form-control mb-1" id="CidadeEstado" placeholder="Cidade/Estado" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
+    <div class="col-md-6"><input class="form-control mb-1" id="Inscrição Estadual" placeholder="Inscrição Estadual" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
+    <div class="col-md-6"><input class="form-control mb-1" id="Endereço" placeholder="Endereço" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
+    <div class="col-md-6"><input class="form-control mb-1" id="Cidade/Estado" placeholder="Cidade/Estado" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
     <div class="col-md-6"><input class="form-control mb-1" id="Telefone" placeholder="Telefone" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
-    <div class="col-md-6"><input type="email" class="form-control mb-1" id="Email" placeholder="E-mail (para recebimento de boleto)" required><div class="invalid-feedback">⚠️ Digite um e-mail válido.</div></div>
-    <div class="col-md-6"><input class="form-control mb-1" id="NomeResponsavel" placeholder="Nome do Responsável" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
+    <div class="col-md-6"><input type="email" class="form-control mb-1" id="E-mail" placeholder="E-mail (para recebimento de boleto)" required><div class="invalid-feedback">⚠️ Digite um e-mail válido.</div></div>
+    <div class="col-md-6"><input class="form-control mb-1" id="Nome do Responsável" placeholder="Nome do Responsável" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
     <div class="col-md-6"><input class="form-control mb-1" id="Data" placeholder="Data" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
   </div>
 
   <!-- Filial / Fornecedor -->
   <h5>Filial / Fornecedor</h5>
   <div class="row">
-    <div class="col-md-6"><input class="form-control mb-1" id="NomeFilial" placeholder="Nome Filial" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
-    <div class="col-md-6"><input class="form-control mb-1" id="EnderecoFilial" placeholder="Endereço Filial" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
-    <div class="col-md-6"><input class="form-control mb-1" id="TelefoneFilial" placeholder="Telefone Filial" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
-    <div class="col-md-6"><input type="email" class="form-control mb-1" id="EmailFilial" placeholder="E-mail Filial" required><div class="invalid-feedback">⚠️ Digite um e-mail válido.</div></div>
+    <div class="col-md-6"><input class="form-control mb-1" id="Nome Filial" placeholder="Nome Filial" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
+    <div class="col-md-6"><input class="form-control mb-1" id="Endereço Filial" placeholder="Endereço Filial" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
+    <div class="col-md-6"><input class="form-control mb-1" id="Telefone Filial" placeholder="Telefone Filial" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
+    <div class="col-md-6"><input type="email" class="form-control mb-1" id="E-mail Filial" placeholder="E-mail Filial" required><div class="invalid-feedback">⚠️ Digite um e-mail válido.</div></div>
     <div class="col-md-6"><input class="form-control mb-1" id="Ramal" placeholder="Ramal" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
-    <div class="col-md-6"><input class="form-control mb-1" id="CidadeEstadoFilial" placeholder="Cidade/Estado Filial" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
+    <div class="col-md-6"><input class="form-control mb-1" id="Cidade/Estado Filial" placeholder="Cidade/Estado Filial" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
   </div>
 
   <div class="mb-3">
@@ -72,7 +71,7 @@ table.table tbody tr td { vertical-align: middle; }
       </thead>
       <tbody></tbody>
     </table>
-    <button class="btn btn-success mt-2" id="btnAdicionarProduto">Adicionar Produto</button>
+    <button class="btn btn-success mt-2" onclick="adicionarLinha()">Adicionar Produto</button>
   </div>
 
   <!-- Pagamento -->
@@ -92,172 +91,81 @@ table.table tbody tr td { vertical-align: middle; }
   </div>
 
   <div class="text-center mt-4">
-    <button class="btn btn-primary" id="btnGerarPdf">Gerar PDF</button>
-    <button class="btn btn-secondary" id="btnLimpar">Limpar</button>
+    <button class="btn btn-primary" id="btnGerarPdf" onclick="gerarPDF()">Gerar PDF</button>
+    <button class="btn btn-secondary" onclick="limpar()">Limpar</button>
   </div>
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", function(){
-  let contador = 1;
-  let itens = [];
-  const tabelaBody = document.querySelector("#tabela_itens tbody");
+document.addEventListener("DOMContentLoaded", function () {
+  var tabelaBody = document.querySelector("#tabela_itens tbody");
+  var contador = 1;
+  var itens = [];
 
-  function maskCNPJ(v){ return v.replace(/\D/g,"").replace(/^(\d{2})(\d)/,"$1.$2").replace(/^(\d{2})\.(\d{3})(\d)/,"$1.$2.$3").replace(/\.(\d{3})(\d)/,".$1/$2").replace(/(\d{4})(\d)/,"$1-$2").slice(0,18); }
-  function maskTel(v){ return v.replace(/\D/g,"").replace(/^(\d{2})(\d)/g,"($1) $2").replace(/(\d{5})(\d{4})$/,"$1-$2").slice(0,15); }
-
-  ["CNPJ","Telefone","TelefoneFilial"].forEach(id=>{
-    const el = document.getElementById(id);
-    if(el) el.addEventListener("input", e=>{
-      if(id==="CNPJ") e.target.value=maskCNPJ(e.target.value);
-      else e.target.value=maskTel(e.target.value);
-    });
-  });
-
-  const dataEl = document.getElementById("Data");
-  if(dataEl) dataEl.value = new Date().toLocaleDateString("pt-BR");
+  function criarInput(classe, tipo, valorInicial){
+    var input = document.createElement("input");
+    input.type = tipo || "text";
+    input.className = "form-control " + (classe||"");
+    if(valorInicial !== undefined) input.value = valorInicial;
+    return input;
+  }
 
   window.adicionarLinha = function(){
-    if(!tabelaBody) return;
+    var tr = document.createElement("tr");
 
-    const tr = document.createElement("tr");
+    var tdItem = document.createElement("td"); tdItem.className="text-center"; tdItem.textContent = contador;
+    var tdQtd = document.createElement("td"); var inpQtd = criarInput("qtd","number","0"); inpQtd.min = 0; tdQtd.appendChild(inpQtd);
+    var tdCod = document.createElement("td"); tdCod.appendChild(criarInput("cod"));
+    var tdDesc = document.createElement("td"); tdDesc.appendChild(criarInput("desc"));
+    var tdPreco = document.createElement("td"); var inpPreco = criarInput("preco","text","0,00"); tdPreco.appendChild(inpPreco);
+    var tdTotal = document.createElement("td"); tdTotal.className="text-end total"; tdTotal.textContent = "0,00";
 
-    const tdItem = document.createElement("td");
-    tdItem.className="text-center";
-    tdItem.textContent=contador;
-
-    const tdQtd = document.createElement("td");
-    const inpQtd = document.createElement("input");
-    inpQtd.type="number";
-    inpQtd.min=0;
-    inpQtd.className="form-control qtd";
-    tdQtd.appendChild(inpQtd);
-
-    const tdCod = document.createElement("td");
-    const inpCod = document.createElement("input");
-    inpCod.type="text";
-    inpCod.className="form-control cod";
-    tdCod.appendChild(inpCod);
-
-    const tdDesc = document.createElement("td");
-    const inpDesc = document.createElement("input");
-    inpDesc.type="text";
-    inpDesc.className="form-control desc";
-    tdDesc.appendChild(inpDesc);
-
-    const tdPreco = document.createElement("td");
-    const inpPreco = document.createElement("input");
-    inpPreco.type="text";
-    inpPreco.className="form-control preco";
-    inpPreco.value="0,00";
-    tdPreco.appendChild(inpPreco);
-
-    const tdTotal = document.createElement("td");
-    tdTotal.className="text-end total";
-    tdTotal.textContent="0,00";
-
-    const tdAcoes = document.createElement("td");
-    tdAcoes.className="text-center";
-    const btnRem = document.createElement("button");
-    btnRem.type="button";
-    btnRem.className="btn btn-sm btn-danger btn-remover";
-    btnRem.textContent="X";
-    btnRem.addEventListener("click", ()=>{ tr.remove(); calcularTotais(); });
+    var tdAcoes = document.createElement("td"); tdAcoes.className="text-center";
+    var btnRem = document.createElement("button"); btnRem.type="button"; btnRem.className="btn btn-sm btn-danger btn-remover"; btnRem.textContent="X";
+    btnRem.addEventListener("click", function(){ tr.remove(); calcularTotais(); });
     tdAcoes.appendChild(btnRem);
 
     tr.append(tdItem, tdQtd, tdCod, tdDesc, tdPreco, tdTotal, tdAcoes);
     tabelaBody.appendChild(tr);
-    contador++;
 
-    [inpQtd, inpPreco].forEach(inp=>{
-      inp.addEventListener("wheel", e=>e.preventDefault());
-      inp.addEventListener("input", calcularTotais);
-    });
+    // prevenir scroll
+    inpQtd.addEventListener("wheel", e=>e.preventDefault());
+    // recalcular total
+    [inpQtd, inpPreco].forEach(i=>i.addEventListener("input", calcularTotais));
+
+    contador++;
   };
 
   function calcularTotais(){
-    itens=[];
+    itens = [];
     tabelaBody.querySelectorAll("tr").forEach(tr=>{
-      const qtd = parseFloat(tr.querySelector(".qtd")?.value.replace(",",".")||0);
-      const preco = parseFloat(tr.querySelector(".preco")?.value.replace(/\./g,"").replace(",",".")||0);
-      const total = qtd*preco;
+      var qtd = parseFloat((tr.querySelector(".qtd").value||"0").replace(",","."));
+      var preco = parseFloat((tr.querySelector(".preco").value||"0").replace(/\./g,"").replace(",","."));
+      if(isNaN(qtd)) qtd=0; if(isNaN(preco)) preco=0;
+      var total = qtd*preco;
       tr.querySelector(".total").textContent = total.toLocaleString("pt-BR",{minimumFractionDigits:2});
       itens.push({
         qtd: qtd.toString(),
-        cod: tr.querySelector(".cod")?.value||"",
-        desc: tr.querySelector(".desc")?.value||"",
+        cod: tr.querySelector(".cod")?.value || "",
+        desc: tr.querySelector(".desc")?.value || "",
         preco: preco.toLocaleString("pt-BR",{minimumFractionDigits:2}),
         tot: total.toLocaleString("pt-BR",{minimumFractionDigits:2})
       });
     });
   }
 
-  tabelaBody.addEventListener("input", e=>{
-    if(e.target.classList.contains("preco") || e.target.classList.contains("qtd")) {
-      e.target.value = e.target.value.replace(",",".");
-
-      calcularTotais();
-    }
+  // validação em vermelho
+  document.querySelectorAll("input[required]").forEach(inp=>{
+    inp.addEventListener("blur", ()=>{ if(!inp.value.trim()) inp.classList.add("is-invalid"); });
+    inp.addEventListener("input", ()=>{ if(inp.value.trim()) inp.classList.remove("is-invalid"); });
   });
-
-  window.gerarPDF = async function(){
-    const obrigatorios = ["Empresa","CNPJ","InscricaoEstadual","Endereco","CidadeEstado","Telefone","Email","NomeResponsavel","Data",
-      "NomeFilial","EnderecoFilial","TelefoneFilial","EmailFilial","Ramal","CidadeEstadoFilial","prazo"];
-    let primeiroErro=null;
-    obrigatorios.forEach(id=>{
-      const el=document.getElementById(id);
-      if(el&&!el.value.trim()){ el.classList.add("is-invalid"); if(!primeiroErro) primeiroErro=el; }
-    });
-    if(primeiroErro){ primeiroErro.scrollIntoView({behavior:"smooth", block:"center"}); primeiroErro.focus(); return; }
-
-    calcularTotais();
-    if(itens.length===0){ alert("⚠️ Adicione ao menos um item antes de gerar o PDF."); return; }
-
-    const cliente={}, filial={};
-    ["Empresa","CNPJ","InscricaoEstadual","Endereco","CidadeEstado","Telefone","Email","NomeResponsavel","Data"].forEach(id=>cliente[id]=document.getElementById(id)?.value||"");
-    ["NomeFilial","EnderecoFilial","TelefoneFilial","EmailFilial","Ramal","CidadeEstadoFilial"].forEach(id=>filial[id]=document.getElementById(id)?.value||"");
-    const pagamento = document.querySelector("input[name='pagamento']:checked")?.value||"";
-    const payload={ cliente, filial, itens, obs:document.getElementById("obs")?.value||"", pagamento, prazo:document.getElementById("prazo")?.value||"" };
-
-    try{
-      const resp=await fetch("/gerar_pdf",{ method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(payload) });
-      if(!resp.ok){ const text=await resp.text(); throw new Error("Erro servidor: "+(text||resp.statusText)); }
-      const blob = await resp.blob();
-
-      if (window.navigator && window.navigator.msSaveOrOpenBlob) {
-          window.navigator.msSaveOrOpenBlob(blob, "Ordem_Compra.pdf");
-      } else {
-          const url = window.URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = "Ordem_Compra.pdf";
-          document.body.appendChild(a);
-          a.click();
-          setTimeout(() => { document.body.removeChild(a); window.URL.revokeObjectURL(url); }, 0);
-      }
-
-    } catch(err){ console.error(err); alert("Erro ao gerar PDF. Veja console."); }
-  };
 
   window.limpar = function(){
     document.querySelectorAll("input").forEach(i=>{ i.value=""; i.classList.remove("is-invalid"); });
-    if(dataEl) dataEl.value=new Date().toLocaleDateString("pt-BR");
-    tabelaBody.innerHTML=""; itens=[]; contador=1;
+    tabelaBody.innerHTML = ""; itens = []; contador = 1;
+    document.getElementById("Data").value = new Date().toLocaleDateString("pt-BR");
   };
-
-  // ✅ Ajuste Firefox: preventDefault no click
-  document.getElementById("btnAdicionarProduto").addEventListener("click", function(e){
-      e.preventDefault();
-      window.adicionarLinha();
-  });
-
-  document.getElementById("btnGerarPdf").addEventListener("click", ()=>window.gerarPDF());
-  document.getElementById("btnLimpar").addEventListener("click", ()=>window.limpar());
-
-  document.querySelectorAll("input[type='number']").forEach(inp=>inp.addEventListener("wheel", e=>e.preventDefault()));
 });
 </script>
-
-<script src="/static/firefox.js"></script>
 </body>
 </html>
