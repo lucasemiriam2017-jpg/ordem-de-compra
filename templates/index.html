@@ -97,6 +97,7 @@ table.table tbody tr td { vertical-align: middle; }
   </div>
 </div>
 
+<!-- ---------------- Script Ajustado para Firefox ---------------- -->
 <script>
 document.addEventListener("DOMContentLoaded", function(){
   let contador = 1;
@@ -118,20 +119,61 @@ document.addEventListener("DOMContentLoaded", function(){
   if(dataEl) dataEl.value = new Date().toLocaleDateString("pt-BR");
 
   window.adicionarLinha = function(){
+    if(!tabelaBody) return;
+
     const tr = document.createElement("tr");
-    const tdItem = document.createElement("td"); tdItem.className="text-center"; tdItem.textContent=contador;
-    const tdQtd = document.createElement("td"); const inpQtd = document.createElement("input"); inpQtd.type="number"; inpQtd.className="form-control qtd"; inpQtd.min=0; tdQtd.appendChild(inpQtd);
-    const tdCod = document.createElement("td"); tdCod.appendChild(document.createElement("input")); tdCod.firstChild.className="form-control cod";
-    const tdDesc = document.createElement("td"); tdDesc.appendChild(document.createElement("input")); tdDesc.firstChild.className="form-control desc";
-    const tdPreco = document.createElement("td"); tdPreco.appendChild(document.createElement("input")); tdPreco.firstChild.className="form-control preco"; tdPreco.firstChild.value="0,00";
-    const tdTotal = document.createElement("td"); tdTotal.className="text-end total"; tdTotal.textContent="0,00";
-    const tdAcoes = document.createElement("td"); tdAcoes.className="text-center";
-    const btnRem = document.createElement("button"); btnRem.type="button"; btnRem.className="btn btn-sm btn-danger btn-remover"; btnRem.textContent="X";
+
+    const tdItem = document.createElement("td");
+    tdItem.className="text-center";
+    tdItem.textContent=contador;
+
+    const tdQtd = document.createElement("td");
+    const inpQtd = document.createElement("input");
+    inpQtd.type="number";
+    inpQtd.min=0;
+    inpQtd.className="form-control qtd";
+    tdQtd.appendChild(inpQtd);
+
+    const tdCod = document.createElement("td");
+    const inpCod = document.createElement("input");
+    inpCod.type="text";
+    inpCod.className="form-control cod";
+    tdCod.appendChild(inpCod);
+
+    const tdDesc = document.createElement("td");
+    const inpDesc = document.createElement("input");
+    inpDesc.type="text";
+    inpDesc.className="form-control desc";
+    tdDesc.appendChild(inpDesc);
+
+    const tdPreco = document.createElement("td");
+    const inpPreco = document.createElement("input");
+    inpPreco.type="text";
+    inpPreco.className="form-control preco";
+    inpPreco.value="0,00";
+    tdPreco.appendChild(inpPreco);
+
+    const tdTotal = document.createElement("td");
+    tdTotal.className="text-end total";
+    tdTotal.textContent="0,00";
+
+    const tdAcoes = document.createElement("td");
+    tdAcoes.className="text-center";
+    const btnRem = document.createElement("button");
+    btnRem.type="button";
+    btnRem.className="btn btn-sm btn-danger btn-remover";
+    btnRem.textContent="X";
     btnRem.addEventListener("click", ()=>{ tr.remove(); calcularTotais(); });
     tdAcoes.appendChild(btnRem);
+
     tr.append(tdItem, tdQtd, tdCod, tdDesc, tdPreco, tdTotal, tdAcoes);
     tabelaBody.appendChild(tr);
     contador++;
+
+    [inpQtd, inpPreco].forEach(inp=>{
+      inp.addEventListener("wheel", e=>e.preventDefault());
+      inp.addEventListener("input", calcularTotais);
+    });
   };
 
   function calcularTotais(){
@@ -154,6 +196,7 @@ document.addEventListener("DOMContentLoaded", function(){
   tabelaBody.addEventListener("input", e=>{
     if(e.target.classList.contains("preco") || e.target.classList.contains("qtd")) {
       e.target.value = e.target.value.replace(",",".");
+
       calcularTotais();
     }
   });
@@ -207,9 +250,7 @@ document.addEventListener("DOMContentLoaded", function(){
   document.getElementById("btnGerarPdf").addEventListener("click", ()=>window.gerarPDF());
   document.getElementById("btnLimpar").addEventListener("click", ()=>window.limpar());
 
-  document.querySelectorAll("input[type='number']").forEach(inp=>{
-    inp.addEventListener("wheel", e=>e.preventDefault());
-  });
+  document.querySelectorAll("input[type='number']").forEach(inp=>inp.addEventListener("wheel", e=>e.preventDefault()));
 });
 </script>
 
