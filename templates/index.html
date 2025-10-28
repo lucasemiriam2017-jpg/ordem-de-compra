@@ -133,12 +133,11 @@ document.addEventListener("DOMContentLoaded", function() {
   function formatarValorInput(input) {
     let v = input.value.replace(/\D/g,"");
     if(!v){ input.value="0,00"; return; }
-    while(v.length<3) v="0"+v;
-    const len=v.length;
-    const reais=v.slice(0,len-2);
-    const centavos=v.slice(len-2);
-    const reaisFormat=reais.replace(/\B(?=(\d{3})+(?!\d))/g,".");
-    input.value = reaisFormat + "," + centavos;
+    let len = v.length;
+    let centavos = v.slice(-2);
+    let reais = v.slice(0, -2) || "0";
+    reais = reais.replace(/\B(?=(\d{3})+(?!\d))/g,".");
+    input.value = reais + "," + centavos;
   }
 
   function adicionarLinha() {
