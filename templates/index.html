@@ -11,9 +11,23 @@ h5 { margin-top: 30px; }
 .logo { display: block; margin: 0 auto 15px; max-width: 200px; }
 #area-itens { margin-top: 25px; }
 input.is-invalid { border-color: #dc3545 !important; }
-.invalid-feedback { display: none; color: #dc3545; font-size: 0.9em; margin-top: 2px; }
-input.is-invalid + .invalid-feedback { display: block; }
-.info-box { background: #f1f5ff; border-left: 4px solid #0d6efd; padding: 10px 15px; border-radius: 6px; font-size: 0.95em; margin-bottom: 20px; }
+.invalid-feedback {
+  display: none;
+  color: #dc3545;
+  font-size: 0.9em;
+  margin-top: 2px;
+}
+input.is-invalid + .invalid-feedback {
+  display: block;
+}
+.info-box {
+  background: #f1f5ff;
+  border-left: 4px solid #0d6efd;
+  padding: 10px 15px;
+  border-radius: 6px;
+  font-size: 0.95em;
+  margin-bottom: 20px;
+}
 </style>
 </head>
 <body>
@@ -21,29 +35,29 @@ input.is-invalid + .invalid-feedback { display: block; }
   <img src="/static/logo.png" alt="Logo" class="logo">
   <h3 class="text-center mb-4">Ordem de Compra — Emissão (PDF)</h3>
 
-  <!-- Empresa solicitante -->
+  <!-- Empresa Solicitante -->
   <h5>Empresa Solicitante</h5>
   <div class="row">
     <div class="col-md-6"><input class="form-control mb-1" id="Empresa" placeholder="Empresa" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
     <div class="col-md-6"><input class="form-control mb-1" id="CNPJ" placeholder="CNPJ" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
-    <div class="col-md-6"><input class="form-control mb-1" id="Inscrição Estadual" placeholder="Inscrição Estadual" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
-    <div class="col-md-6"><input class="form-control mb-1" id="Endereço" placeholder="Endereço" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
-    <div class="col-md-6"><input class="form-control mb-1" id="Cidade/Estado" placeholder="Cidade/Estado" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
+    <div class="col-md-6"><input class="form-control mb-1" id="InscricaoEstadual" placeholder="Inscrição Estadual" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
+    <div class="col-md-6"><input class="form-control mb-1" id="Endereco" placeholder="Endereço" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
+    <div class="col-md-6"><input class="form-control mb-1" id="CidadeEstado" placeholder="Cidade/Estado" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
     <div class="col-md-6"><input class="form-control mb-1" id="Telefone" placeholder="Telefone" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
-    <div class="col-md-6"><input type="email" class="form-control mb-1" id="E-mail" placeholder="E-mail (para recebimento de boleto)" required><div class="invalid-feedback">⚠️ Digite um e-mail válido.</div></div>
-    <div class="col-md-6"><input class="form-control mb-1" id="Nome do Responsável" placeholder="Nome do Responsável" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
+    <div class="col-md-6"><input type="email" class="form-control mb-1" id="Email" placeholder="E-mail (para recebimento de boleto)" required><div class="invalid-feedback">⚠️ Digite um e-mail válido.</div></div>
+    <div class="col-md-6"><input class="form-control mb-1" id="NomeResponsavel" placeholder="Nome do Responsável" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
     <div class="col-md-6"><input class="form-control mb-1" id="Data" placeholder="Data" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
   </div>
 
   <!-- Filial / Fornecedor -->
   <h5>Filial / Fornecedor</h5>
   <div class="row">
-    <div class="col-md-6"><input class="form-control mb-1" id="Nome Filial" placeholder="Nome Filial" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
-    <div class="col-md-6"><input class="form-control mb-1" id="Endereço Filial" placeholder="Endereço Filial" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
-    <div class="col-md-6"><input class="form-control mb-1" id="Telefone Filial" placeholder="Telefone Filial" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
-    <div class="col-md-6"><input type="email" class="form-control mb-1" id="E-mail Filial" placeholder="E-mail Filial" required><div class="invalid-feedback">⚠️ Digite um e-mail válido.</div></div>
+    <div class="col-md-6"><input class="form-control mb-1" id="NomeFilial" placeholder="Nome Filial" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
+    <div class="col-md-6"><input class="form-control mb-1" id="EnderecoFilial" placeholder="Endereço Filial" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
+    <div class="col-md-6"><input class="form-control mb-1" id="TelefoneFilial" placeholder="Telefone Filial" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
+    <div class="col-md-6"><input type="email" class="form-control mb-1" id="EmailFilial" placeholder="E-mail Filial" required><div class="invalid-feedback">⚠️ Digite um e-mail válido.</div></div>
     <div class="col-md-6"><input class="form-control mb-1" id="Ramal" placeholder="Ramal" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
-    <div class="col-md-6"><input class="form-control mb-1" id="Cidade/Estado Filial" placeholder="Cidade/Estado Filial" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
+    <div class="col-md-6"><input class="form-control mb-1" id="CidadeEstadoFilial" placeholder="Cidade/Estado Filial" required><div class="invalid-feedback">⚠️ Preencha este campo.</div></div>
   </div>
 
   <div class="mb-3">
@@ -98,81 +112,81 @@ input.is-invalid + .invalid-feedback { display: block; }
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function() {
+  // máscaras e inicialização
+  function maskCNPJ(v){ return v.replace(/\D/g,"").replace(/^(\d{2})(\d)/,"$1.$2").replace(/^(\d{2})\.(\d{3})(\d)/,"$1.$2.$3").replace(/\.(\d{3})(\d)/,".$1/$2").replace(/(\d{4})(\d)/,"$1-$2").slice(0,18);}
+  function maskTel(v){ return v.replace(/\D/g,"").replace(/^(\d{2})(\d)/g,"($1) $2").replace(/(\d{5})(\d{4})$/,"$1-$2").slice(0,15);}
 
-  // ---- Máscaras e data automática ----
   const cnpj = document.getElementById("CNPJ");
-  const telefone = document.getElementById("Telefone");
-  const telefoneFilial = document.getElementById("Telefone Filial");
+  const tel = document.getElementById("Telefone");
+  const telFilial = document.getElementById("TelefoneFilial");
   const data = document.getElementById("Data");
 
-  function maskCNPJ(v){
-    return v.replace(/\D/g,"").replace(/^(\d{2})(\d)/,"$1.$2")
-            .replace(/^(\d{2})\.(\d{3})(\d)/,"$1.$2.$3")
-            .replace(/\.(\d{3})(\d)/,".$1/$2")
-            .replace(/(\d{4})(\d)/,"$1-$2").slice(0,18);
-  }
-  function maskTel(v){
-    return v.replace(/\D/g,"").replace(/^(\d{2})(\d)/,"($1) $2")
-            .replace(/(\d{5})(\d{4})$/,"$1-$2").slice(0,15);
-  }
-
-  if(cnpj) cnpj.addEventListener("input", e=>e.target.value=maskCNPJ(e.target.value));
-  if(telefone) telefone.addEventListener("input", e=>e.target.value=maskTel(e.target.value));
-  if(telefoneFilial) telefoneFilial.addEventListener("input", e=>e.target.value=maskTel(e.target.value));
+  if(cnpj) cnpj.addEventListener("input", e=> e.target.value = maskCNPJ(e.target.value));
+  if(tel) tel.addEventListener("input", e=> e.target.value = maskTel(e.target.value));
+  if(telFilial) telFilial.addEventListener("input", e=> e.target.value = maskTel(e.target.value));
   if(data) data.value = new Date().toLocaleDateString("pt-BR");
 
-  // ---- Tabela de produtos ----
+  // tabela produtos
   const tabelaBody = document.querySelector("#tabela_itens tbody");
   let contador = 1;
   let itens = [];
 
-  function criarInput(classe, tipo, placeholder){
-    const input = document.createElement("input");
-    input.type = tipo || "text";
-    input.className = "form-control " + (classe || "");
-    if(placeholder) input.placeholder = placeholder;
-    return input;
+  function criarInput(classe, tipo, valorInicial){
+    const inp = document.createElement("input");
+    inp.type = tipo||"text";
+    inp.className = "form-control "+(classe||"");
+    if(valorInicial) inp.value = valorInicial;
+    return inp;
   }
 
-  function formatarValorDinamico(input){
-    let v = input.value.replace(/\D/g,"");
-    if(!v) { input.value = "0,00"; return; }
-    while(v.length < 3) v = "0" + v;
-    let centavos = v.slice(-2);
-    let reais = v.slice(0,-2);
-    reais = reais.replace(/\B(?=(\d{3})+(?!\d))/g,".");
-    input.value = reais + "," + centavos;
+  function formatarValor(valor){
+    if(!valor) return "";
+    valor = valor.replace(/\D/g,"");
+    let n = parseFloat(valor)/100;
+    if(isNaN(n)) n=0;
+    let partes = n.toFixed(2).split(".");
+    partes[0] = partes[0].replace(/\B(?=(\d{3})+(?!\d))/g,".");
+    return partes.join(",");
   }
 
-  window.adicionarLinha = function(){
+  function adicionarLinha(){
     const tr = document.createElement("tr");
 
     const tdItem = document.createElement("td"); tdItem.className="text-center"; tdItem.textContent=contador;
-    const tdQtd = document.createElement("td"); const inpQtd = criarInput("qtd","number",""); inpQtd.min=0; tdQtd.appendChild(inpQtd);
-    const tdCod = document.createElement("td"); tdCod.appendChild(criarInput("cod","text",""));
-    const tdDesc = document.createElement("td"); tdDesc.appendChild(criarInput("desc","text",""));
+    const tdQtd = document.createElement("td"); const inpQtd = criarInput("qtd","number"); inpQtd.min=0; tdQtd.appendChild(inpQtd);
+    const tdCod = document.createElement("td"); tdCod.appendChild(criarInput("cod","text"));
+    const tdDesc = document.createElement("td"); tdDesc.appendChild(criarInput("desc","text"));
     const tdPreco = document.createElement("td"); const inpPreco = criarInput("preco","text","0,00"); tdPreco.appendChild(inpPreco);
     const tdTotal = document.createElement("td"); tdTotal.className="text-end total"; tdTotal.textContent="0,00";
     const tdAcoes = document.createElement("td"); tdAcoes.className="text-center";
-    const btnRem = document.createElement("button"); btnRem.type="button"; btnRem.className="btn btn-sm btn-danger btn-remover"; btnRem.textContent="X";
+    const btnRem = document.createElement("button"); btnRem.type="button"; btnRem.className="btn btn-sm btn-danger btn-remover"; btnRem.textContent="X"; 
     tdAcoes.appendChild(btnRem);
 
     tr.append(tdItem, tdQtd, tdCod, tdDesc, tdPreco, tdTotal, tdAcoes);
     tabelaBody.appendChild(tr);
     contador++;
 
+    // eventos
     [inpQtd, inpPreco].forEach(inp=>{
       inp.addEventListener("input", calcularTotais);
       inp.addEventListener("wheel", e=>e.preventDefault());
     });
-    inpPreco.addEventListener("input", ()=>{ formatarValorDinamico(inpPreco); calcularTotais(); });
+
+    // limpar 0,00 ao digitar
+    inpPreco.addEventListener("focus", ()=>{
+      if(inpPreco.value==="0,00") inpPreco.value="";
+    });
+    inpPreco.addEventListener("input", ()=>{
+      inpPreco.value = formatarValor(inpPreco.value);
+      calcularTotais();
+    });
 
     btnRem.addEventListener("click", ()=>{ tr.remove(); calcularTotais(); });
-  };
+  }
 
   function calcularTotais(){
-    itens = [];
+    itens=[];
     tabelaBody.querySelectorAll("tr").forEach(tr=>{
       const qtd = parseFloat(tr.querySelector(".qtd")?.value.replace(",",".")||0);
       const preco = parseFloat(tr.querySelector(".preco")?.value.replace(/\./g,"").replace(",",".")||0);
@@ -188,52 +202,48 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  document.getElementById("btnAdicionarProduto").addEventListener("click", window.adicionarLinha);
+  document.getElementById("btnAdicionarProduto").addEventListener("click", adicionarLinha);
 
-  // ---- Validação campos ----
-  const requiredInputs = document.querySelectorAll("input[required]");
-  requiredInputs.forEach(input=>{
-    input.addEventListener("blur", ()=>{ if(!input.value.trim()) input.classList.add("is-invalid"); });
-    input.addEventListener("input", ()=>{ if(input.value.trim()) input.classList.remove("is-invalid"); });
+  // validação campos obrigatórios
+  document.querySelectorAll("input[required]").forEach(inp=>{
+    inp.addEventListener("blur", ()=>{ if(!inp.value.trim()) inp.classList.add("is-invalid"); });
+    inp.addEventListener("input", ()=>{ if(inp.value.trim()) inp.classList.remove("is-invalid"); });
   });
 
-  // ---- Gerar PDF ----
+  // gerar PDF
   window.gerarPDF = async function(){
-    const obrigatorios = ["Empresa","CNPJ","Inscrição Estadual","Endereço","Cidade/Estado","Telefone","E-mail","Nome do Responsável","Data",
-      "Nome Filial","Endereço Filial","Telefone Filial","E-mail Filial","Ramal","Cidade/Estado Filial","prazo"];
+    const obrigatorios = ["Empresa","CNPJ","InscricaoEstadual","Endereco","CidadeEstado","Telefone","Email","NomeResponsavel","Data","NomeFilial","EnderecoFilial","TelefoneFilial","EmailFilial","Ramal","CidadeEstadoFilial","prazo"];
     let primeiroErro=null;
     obrigatorios.forEach(id=>{
       const el=document.getElementById(id);
       if(el && !el.value.trim()){ el.classList.add("is-invalid"); if(!primeiroErro) primeiroErro=el; }
     });
     if(primeiroErro){ primeiroErro.scrollIntoView({behavior:"smooth", block:"center"}); primeiroErro.focus(); return; }
-
     calcularTotais();
     if(itens.length===0){ alert("⚠️ Adicione ao menos um item antes de gerar o PDF."); return; }
 
     const cliente={}, filial={};
-    ["Empresa","CNPJ","Inscrição Estadual","Endereço","Cidade/Estado","Telefone","E-mail","Nome do Responsável","Data"].forEach(id=>cliente[id]=document.getElementById(id)?.value||"");
-    ["Nome Filial","Endereço Filial","Telefone Filial","E-mail Filial","Ramal","Cidade/Estado Filial"].forEach(id=>filial[id]=document.getElementById(id)?.value||"");
+    ["Empresa","CNPJ","InscricaoEstadual","Endereco","CidadeEstado","Telefone","Email","NomeResponsavel","Data"].forEach(id=>cliente[id]=document.getElementById(id)?.value||"");
+    ["NomeFilial","EnderecoFilial","TelefoneFilial","EmailFilial","Ramal","CidadeEstadoFilial"].forEach(id=>filial[id]=document.getElementById(id)?.value||"");
     const pagamento = document.querySelector("input[name='pagamento']:checked")?.value||"";
     const payload = { cliente, filial, itens, obs:document.getElementById("obs")?.value||"", pagamento, prazo:document.getElementById("prazo")?.value||"" };
 
     try{
-      const resp = await fetch("/gerar_pdf", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(payload) });
+      const resp=await fetch("/gerar_pdf",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
       if(!resp.ok){ const text=await resp.text(); throw new Error("Erro servidor: "+(text||resp.statusText)); }
-      const blob = await resp.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
+      const blob=await resp.blob();
+      const url=window.URL.createObjectURL(blob);
+      const a=document.createElement("a");
       a.href=url; a.download="Ordem_Compra.pdf"; document.body.appendChild(a); a.click(); a.remove(); window.URL.revokeObjectURL(url);
     } catch(err){ console.error(err); alert("Erro ao gerar PDF. Veja console."); }
   };
 
-  // ---- Limpar formulário ----
+  // limpar formulário
   document.getElementById("btnLimpar").addEventListener("click", ()=>{
     document.querySelectorAll("input").forEach(i=>{ i.value=""; i.classList.remove("is-invalid"); });
-    if(data) data.value = new Date().toLocaleDateString("pt-BR");
+    if(data) data.value=new Date().toLocaleDateString("pt-BR");
     tabelaBody.innerHTML=""; itens=[]; contador=1;
   });
-
 });
 </script>
 </body>
