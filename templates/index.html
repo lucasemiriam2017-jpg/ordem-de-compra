@@ -97,7 +97,6 @@ table.table tbody tr td { vertical-align: middle; }
   </div>
 </div>
 
-<!-- ---------------- Script Ajustado para Firefox ---------------- -->
 <script>
 document.addEventListener("DOMContentLoaded", function(){
   let contador = 1;
@@ -246,7 +245,12 @@ document.addEventListener("DOMContentLoaded", function(){
     tabelaBody.innerHTML=""; itens=[]; contador=1;
   };
 
-  document.getElementById("btnAdicionarProduto").addEventListener("click",()=>window.adicionarLinha());
+  // ✅ Ajuste Firefox: preventDefault no click
+  document.getElementById("btnAdicionarProduto").addEventListener("click", function(e){
+      e.preventDefault();
+      window.adicionarLinha();
+  });
+
   document.getElementById("btnGerarPdf").addEventListener("click", ()=>window.gerarPDF());
   document.getElementById("btnLimpar").addEventListener("click", ()=>window.limpar());
 
