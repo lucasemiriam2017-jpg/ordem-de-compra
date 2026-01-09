@@ -238,12 +238,20 @@ document.addEventListener("DOMContentLoaded", function() {
     } catch(err){ console.error(err); alert("Erro ao gerar PDF. Veja console."); }
   };
 
-  // limpar formulário
+    // limpar formulário
   document.getElementById("btnLimpar").addEventListener("click", ()=>{
-    document.querySelectorAll("input").forEach(i=>{ i.value=""; i.classList.remove("is-invalid"); });
+    document.querySelectorAll("input").forEach(i=>{
+      i.value="";
+      i.classList.remove("is-invalid");
+    });
     if(data) data.value=new Date().toLocaleDateString("pt-BR");
-    tabelaBody.innerHTML=""; itens=[]; contador=1;
+    tabelaBody.innerHTML="";
+    itens=[];
+    contador=1;
   });
+
+  document.getElementById("btnGerarPdf").addEventListener("click", gerarPDF);
+
 });
 </script>
 </body>
