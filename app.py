@@ -5,6 +5,7 @@ from reportlab.lib.units import cm
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_CENTER, TA_LEFT
+from decimal import Decimal, InvalidOperation
 import io, os, re, urllib.parse
 
 app = Flask(__name__)
@@ -20,21 +21,27 @@ def is_valid_email(email):
         return False
     return re.match(r"[^@]+@[^@]+\.[^@]+", email) is not None
 
-def parse_brl_float(value, default=0.0):
+def parse_brl_decimal(value, default=Decimal("0")):
     if value is None:
         return default
+    if isinstance(value, Decimal):
+        return value
     if isinstance(value, (int, float)):
-        return float(value)
+        return Decimal(str(value))
     if isinstance(value, str):
         cleaned = value.strip()
         if not cleaned:
             return default
         cleaned = cleaned.replace(".", "").replace(",", ".")
         try:
-            return float(cleaned)
-        except ValueError:
+            return Decimal(cleaned)
+        except InvalidOperation:
             return default
     return default
+
+def format_brl(value):
+    formatted = f"{value:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+    return f"R$ {formatted}"
 
 @app.route("/")
 def index():
@@ -105,20 +112,24 @@ def gerar_pdf():
     total_geral = 0
 
     for i, item in enumerate(itens, start=1):
-        qtd = parse_brl_float(item.get("qtd", 0))
+        qtd = parse_brl_decimal(item.get("qtd", 0))
         cod = item.get("cod", "")
         desc = item.get("desc", "")
-        preco = parse_brl_float(item.get("preco", "0"))
-        tot = parse_brl_float(item.get("tot", "0"))
-        if tot == 0 and qtd and preco:
+        preco = parse_brl_decimal(item.get("preco", "0"))
+        tot = parse_brl_decimal(item.get("tot", "0"))
+        if tot == 0 and qtd != 0 and preco != 0:
             tot = qtd * preco
         total_geral += tot
-        p_fmt = f"R$ {preco:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
-        t_fmt = f"R$ {tot:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
-        data_table.append([str(i), qtd, cod, Paragraph(desc, st["tabela"]), p_fmt, t_fmt])
+        data_table.append([
+            str(i),
+            f"{qtd}".replace(".", ","),
+            cod,
+            Paragraph(desc, st["tabela"]),
+            format_brl(preco),
+            format_brl(tot)
+        ])
 
-    total_fmt = f"{total_geral:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
-    data_table.append(["", "", "", Paragraph("<b>TOTAL GERAL</b>", st["tabela"]), "", f"R$ {total_fmt}"])
+    data_table.append(["", "", "", Paragraph("<b>TOTAL GERAL</b>", st["tabela"]), "", format_brl(total_geral)])
 
     t = Table(data_table, colWidths=cols, repeatRows=1)
     t.setStyle(TableStyle([
