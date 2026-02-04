@@ -20,6 +20,22 @@ def is_valid_email(email):
         return False
     return re.match(r"[^@]+@[^@]+\.[^@]+", email) is not None
 
+def parse_brl_float(value, default=0.0):
+    if value is None:
+        return default
+    if isinstance(value, (int, float)):
+        return float(value)
+    if isinstance(value, str):
+        cleaned = value.strip()
+        if not cleaned:
+            return default
+        cleaned = cleaned.replace(".", "").replace(",", ".")
+        try:
+            return float(cleaned)
+        except ValueError:
+            return default
+    return default
+
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -89,11 +105,13 @@ def gerar_pdf():
     total_geral = 0
 
     for i, item in enumerate(itens, start=1):
-        qtd = float(item.get("qtd", 0))
+        qtd = parse_brl_float(item.get("qtd", 0))
         cod = item.get("cod", "")
         desc = item.get("desc", "")
-        preco = float(str(item.get("preco","0").replace(".","").replace(",", ".")))
-        tot = float(str(item.get("tot","0").replace(".","").replace(",", ".")))
+        preco = parse_brl_float(item.get("preco", "0"))
+        tot = parse_brl_float(item.get("tot", "0"))
+        if tot == 0 and qtd and preco:
+            tot = qtd * preco
         total_geral += tot
         p_fmt = f"R$ {preco:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
         t_fmt = f"R$ {tot:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
