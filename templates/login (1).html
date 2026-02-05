@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Administrativo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f0f4ff, #ffffff);
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 420px;
+            margin: 80px auto;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            display: block;
+            margin: 0 auto 20px;
+            max-width: 120px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 25px;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 18px;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aaa;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px 12px 12px 40px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            font-size: 15px;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            border-color: #4a90e2;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            margin-top: 10px;
+            background-color: #4a90e2;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+            box-sizing: border-box;
+        }
+
+        button:hover {
+            background-color: #357ab8;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .error {
+            background: #ffe6e6;
+            color: #b00000;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 18px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        @media(max-width: 600px){
+            .container {
+                margin: 20px;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="logo">
+        <h2>Login Administrativo</h2>
+
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+
+        <form method="post" action="/login">
+            <div class="input-group">
+                <i class="fa fa-user"></i>
+                <input type="text" name="usuario" placeholder="Usuário" required>
+            </div>
+
+            <div class="input-group">
+                <i class="fa fa-lock"></i>
+                <input type="password" name="senha" placeholder="Senha" required>
+            </div>
+
+            <button type="submit">Entrar</button>
+        </form>
+    </div>
+</body>
+</html>
