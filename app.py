@@ -14,7 +14,7 @@ from datetime import datetime, date
 from dotenv import load_dotenv
 
 import psycopg2
-import pandas as pd
+from openpyxl import load_workbook
 import io, os, re, urllib.parse, json, csv
 
 # -------------------- CONFIG --------------------
@@ -463,3 +463,4 @@ def importar_partidas():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
