@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Ordens</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f0f4ff, #ffffff);
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 50px auto;
+            padding: 25px;
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 25px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+            vertical-align: middle;
+        }
+        th {
+            background-color: #f4f4f4;
+            font-weight: 600;
+        }
+        tr:hover {
+            background-color: #f0f8ff;
+        }
+        a {
+            color: #4a90e2;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .info {
+            background:#eef7ff;
+            color:#045a9c;
+            padding: 10px 15px;
+            border-radius:8px;
+            margin-bottom: 15px;
+        }
+        .small {
+            font-size: 13px;
+            color: #666;
+        }
+        .button-link {
+            display: inline-block;
+            padding: 8px 12px;
+            margin-left: 6px;
+            background-color: #4a90e2;
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .button-link:hover {
+            background-color: #357ab8;
+        }
+        .button-danger {
+            background-color: #e24a4a;
+        }
+        .button-danger:hover {
+            background-color: #c13c3c;
+        }
+        .top-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .inline-form {
+            display: inline;
+        }
+        .file-input {
+            display:none;
+        }
+        .status-box {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .status-input {
+            min-width: 210px;
+            padding: 8px 10px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        .badge {
+            display:inline-block;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            border: 1px solid #d7e6f7;
+            background: #f6fbff;
+            color: #045a9c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>📄 Lista de Ordens de Compra</h2>
+
+        {% if error %}
+            <div class="info">Erro ao carregar a lista: {{ error }}</div>
+        {% endif %}
+
+        <div class="info small top-actions">
+            <div>
+                Total de ordens: {{ ordens|length }}
+            </div>
+
+            <div>
+                <!-- Importar CNPJ -->
+                <form class="inline-form" action="/admin/importar-cnpj" method="post" enctype="multipart/form-data">
+                    <label class="button-link" for="file-cnpj">⬆️ Importar CNPJ</label>
+                    <input class="file-input" id="file-cnpj" type="file" name="arquivo" accept=".xlsx" onchange="this.form.submit()">
+                </form>
+
+                <!-- Importar Partidas -->
+                <form class="inline-form" action="/admin/importar-partidas" method="post" enctype="multipart/form-data">
+                    <label class="button-link" for="file-partidas">⬆️ Importar Partidas</label>
+                    <input class="file-input" id="file-partidas" type="file" name="arquivo" accept=".xlsx" onchange="this.form.submit()">
+                </form>
+
+                <a class="button-link" href="/admin/ordens/baixar-csv">⬇️ Baixar CSV</a>
+
+                <a class="button-link" href="{{ url_for('logout') }}">🚪 Logout</a>
+            </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Empresa</th>
+                    <th>CNPJ</th>
+                    <th>BP</th>
+                    <th>Status</th>
+                    <th>PDF</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for o in ordens %}
+                <tr>
+                    <td>{{ o.created_at.strftime('%d/%m/%Y') if o.created_at else '' }}</td>
+                    <td>{{ o.cliente_nome or '' }}</td>
+                    <td>{{ o.cliente_cnpj or '' }}</td>
+                    <td>{{ o.bp or '' }}</td>
+
+                    <td>
+                        <div class="status-box">
+                            <span class="badge">Auto: {{ o.status_auto or '-' }}</span>
+                            {% if o.status_manual %}
+                                <span class="badge">Manual: {{ o.status_manual }}</span>
+                            {% endif %}
+                        </div>
+
+                        <div style="height:8px;"></div>
+
+                        <form action="/admin/ordens/{{ o.id }}/status" method="post" class="status-box">
+                            <input
+                                class="status-input"
+                                type="text"
+                                name="status_manual"
+                                placeholder="Editar status (opcional)"
+                                value="{{ o.status_manual or '' }}"
+                            >
+                            <button type="submit" class="button-link">💾 Salvar</button>
+                            <button type="submit" class="button-link button-danger"
+                                    onclick="this.form.status_manual.value='';">
+                                ↩️ Voltar automático
+                            </button>
+                        </form>
+
+                        <div style="height:6px;"></div>
+                        <div class="small"><b>Final:</b> {{ o.status_final or o.status_auto or '-' }}</div>
+                    </td>
+
+                    <td>
+                        <a href="/admin/ordens/{{ o.id }}/pdf" target="_blank">Visualizar</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div style="height:10px;"></div>
+        <div class="small">
+            Dica: “Importar CNPJ” e “Importar Partidas” atualizam a base de consulta.
+            As próximas ordens geradas já virão com o status automático recalculado.
+        </div>
+    </div>
+</body>
+</html>
